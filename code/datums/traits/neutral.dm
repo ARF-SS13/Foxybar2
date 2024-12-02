@@ -11,7 +11,6 @@
 		/datum/quirk/pineapple_liker,
 		/datum/quirk/pineapple_hater,
 		/datum/quirk/deviant_tastes,
-		/datum/quirk/nukalover,
 	)
 	mob_trait = TRAIT_AGEUSIA
 	gain_text = span_notice("You can't taste anything!")
@@ -98,7 +97,6 @@
 	conflicts = list(
 		/datum/quirk/no_taste,
 		/datum/quirk/pineapple_hater,
-		/datum/quirk/nukalover,
 	)
 	gain_text = span_notice("You feel an intense craving for pineapple.")
 	lose_text = span_notice("Your feelings towards pineapples seem to return to a lukewarm state.")
@@ -124,7 +122,6 @@
 	conflicts = list(
 		/datum/quirk/no_taste,
 		/datum/quirk/pineapple_liker,
-		/datum/quirk/nukalover,
 	)
 	gain_text = span_notice("You find yourself pondering what kind of idiot actually enjoys pineapples...")
 	lose_text = span_notice("Your feelings towards pineapples seem to return to a lukewarm state.")
@@ -345,8 +342,6 @@
 	mechanics = "You spawn in overweight and full, this also limits your movement quirks out of Freerunning, Light Step, and Quick Walking. Good if you plan on bleeding a lot near round start, I guess."
 	mob_trait = TRAIT_FAT
 	conflicts = list(
-		/datum/quirk/freerunning,
-		/datum/quirk/light_step,
 		// /datum/quirk/quick_step,
 	)
 	gain_text = span_notice("You feel blubbery!")
@@ -364,7 +359,6 @@
 	category = "Food Quirks"
 	mechanics = "You are mechanically disgusted by eating meat."
 	conflicts = list(
-		/datum/quirk/horrifying_tastes,
 		)
 	gain_text = span_notice("You feel repulsion at the idea of eating meat.")
 	lose_text = span_notice("You feel like eating meat isn't that bad.  Might could even go for a cheeseburger.")
@@ -669,7 +663,6 @@
 	category = "Lifepath Quirks"
 	mechanics = "Like it says, camera and photo album. The album saves between rounds for you to remember all those good times with. Or cry in six months when you come back and see it again."
 	conflicts = list(
-		/datum/quirk/luddite, // fucer'll steal your soul
 	)
 	mob_trait = TRAIT_PHOTOGRAPHER
 	gain_text = span_notice("You know everything about photography.")
