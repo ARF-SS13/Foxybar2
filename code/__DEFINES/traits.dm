@@ -278,6 +278,7 @@
 #define TRAIT_NIGHT_VISION_GREATER		"night_vision_greater"
 #define TRAIT_LIGHT_STEP		"light_step"
 #define TRAIT_SILENT_STEP		"silent_step"
+#define TRAIT_SPEEDY_STEP		"speedy_step"
 #define TRAIT_SPIRITUAL			"spiritual"
 #define TRAIT_BLINDFAITH		"blindfaith"
 #define TRAIT_VORACIOUS			"voracious"
@@ -326,7 +327,7 @@
 #define TRAIT_THERMAL_VISION    "thermal_vision"
 #define TRAIT_TACKLER            "tackler"
 #define TRAIT_TACKLERADV           "Advanced Tackler"
-#define TRAIT_TACKLERAPEX           "Apex Tackler"
+#define TRAIT_TACKLERNONCONX           "Apex Tackler"
 #define TRAIT_NO_TELEPORT		"no-teleport" //you just can't
 #define TRAIT_NO_INTERNALS		"no-internals"
 #define TRAIT_NO_ALCOHOL		"alcohol_intolerance"
@@ -352,7 +353,22 @@
 #define TRAIT_DISTANT "distant"
 #define TRAIT_HEADPAT_SLUT "headpat_sluuuuut"
 #define TRAIT_ORAL_FIXATION "oral fixation"
-#define TRAIT_PACKRAT "packrat"
+#define TRAIT_RISKY_BUSINESS "creampie fixation"
+#define TRAIT_NOERP "no erp"
+#define TRAIT_VANILLAERP "vanilla erp"
+#define TRAIT_ROUGHERP "rough erp"
+#define TRAIT_EXTREMEERP "extreme erp"
+#define TRAIT_SNUGGLER "snuggle rp"
+#define TRAIT_FERALERP "feral erp"
+#define TRAIT_ROBOTERP "robot erp"
+#define TRAIT_VOREERP "vore erp"
+#define TRAIT_DANIMAL "feeder quirk"
+#define TRAIT_FATERP "far erp"
+#define TRAIT_BIGBUTT "big butt"
+#define TRAIT_BIGBOOBS "big boobs"
+#define TRAIT_BIGBALLS "big balls"
+#define TRAIT_BIGWEENIE "big dick"	
+//#define TRAIT_PACKRAT "packrat"
 #define TRAIT_HYDRA_HEADS "hydra_heads"
 #define TRAIT_SHELTERED "sheltered"
 #define TRAIT_WEAPONSMITH "weaponsmith"
@@ -373,13 +389,9 @@
 #define TRAIT_ENDLESS_RUNNER "endless_runner"
 #define TRAIT_PANICKED_ATTACKER "panicked_attacker"
 #define TRAIT_NOHIDEFACE "no hide face"
-#define TRAIT_SECURITYEXPERT "security-expert"
 #define TRAIT_CLAM_TONGUE "clam_tongue"
 #define TRAIT_CLAM_LOVER "clam_lover"
 #define TRAIT_CLAM_FISHER "clam_fisher"
-#define TRAIT_PILLOW_CRIMINAL "pillow_crimes"
-
-#define TRAIT_NO_PVP_EVER "no_pvp_ever"
 
 // mobility flag traits
 // IN THE FUTURE, IT WOULD BE NICE TO DO SOMETHING SIMILAR TO https://github.com/tgstation/tgstation/pull/48923/files (ofcourse not nearly the same because I have my.. thoughts on it)
@@ -446,6 +458,7 @@
 /// You're hooked on punga!
 #define TRAIT_PUNGAPOWER "pungaful"
 #define TRAIT_NO_SECOND_WIND "no_second_wind"
+#define TRAIT_NOCRITPAIN "no_crit_pain"
 
 #define TRAIT_NO_MED_HVY_ARMOR "no_med_heavy_armor"
 
