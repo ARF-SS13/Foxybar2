@@ -94,12 +94,12 @@ GLOBAL_LIST_INIT(personalitytrait2description, list(
 		if(HAS_TRAIT(L, TRAIT_PROSOPAGNOSIA))
 			obscure_name = TRUE
 
-	. = list("<span class='info'>*---------*\nThis is <EM>[!obscure_name ? name : "Unknown"]</EM>! [t_He] [t_is] a [dna.custom_species ? dna.custom_species : dna.species.name]!")
-
-	var/imagelink = SSchat.GetPicForMode(src, MODE_PROFILE_PIC)
-	if (imagelink)
-		. += "<a href='?src=[REF(src)];enlargeImage=1'><img src='[imagelink]' width='125' height='auto' max-height='300'></a>"
-
+	var/datum/preferences/P = extract_prefs(src)
+	. = list("<span class='info'>*---------*\n")
+	if(P)
+		var/followers_clinic_full_of_big_strong_gay_dogs_in_it = SSchat.GetPicForMode(src, MODE_PROFILE_PIC)
+		. += "<img src='[followers_clinic_full_of_big_strong_gay_dogs_in_it]' height='auto' width='auto' max-width='[P.see_pfp_max_widht]px' max-height='[P.see_pfp_max_hight]px'>"
+	. += span_info("<font size=2>This is <EM>[!obscure_name ? name : "Unknown"]</EM>! [t_He] [t_is] a [dna.custom_species ? dna.custom_species : dna.species.name]!</font>")
 
 	var/vampDesc = ReturnVampExamine(user) // Vamps recognize the names of other vamps.
 	var/vassDesc = ReturnVassalExamine(user) // Vassals recognize each other's marks.
@@ -108,91 +108,91 @@ GLOBAL_LIST_INIT(personalitytrait2description, list(
 	if (vassDesc != "")
 		. += vassDesc
 
-	var/list/obscured = check_obscured_slots()
+//	var/list/obscured = check_obscured_slots()
 	var/skipface = !HAS_TRAIT(src, TRAIT_NOHIDEFACE) && ((wear_mask && (wear_mask.flags_inv & HIDEFACE)) || (head && (head.flags_inv & HIDEFACE)))
 
-	//uniform
-	if(w_uniform && !(SLOT_W_UNIFORM in obscured))
-		//accessory
-		var/accessory_msg
-		if(istype(w_uniform, /obj/item/clothing/under))
-			var/obj/item/clothing/under/U = w_uniform
-			if(U.attached_accessory && !(U.attached_accessory.flags_inv & HIDEACCESSORY) && !(U.flags_inv & HIDEACCESSORY))
-				accessory_msg += " with [icon2html(U.attached_accessory, user)] \a [U.attached_accessory]"
-			if(U.attached_accessory_b && !(U.attached_accessory_b.flags_inv & HIDEACCESSORY) && !(U.flags_inv & HIDEACCESSORY))
-				accessory_msg += ", [icon2html(U.attached_accessory_b, user)] \a [U.attached_accessory_b]"
-			if(U.attached_accessory_c && !(U.attached_accessory_c.flags_inv & HIDEACCESSORY) && !(U.flags_inv & HIDEACCESSORY))
-				accessory_msg += ", [icon2html(U.attached_accessory_c, user)] \a [U.attached_accessory_c]"
+	// //uniform
+	// if(w_uniform && !(SLOT_W_UNIFORM in obscured))
+	// 	//accessory
+	// 	var/accessory_msg
+	// 	if(istype(w_uniform, /obj/item/clothing/under))
+	// 		var/obj/item/clothing/under/U = w_uniform
+	// 		if(U.attached_accessory && !(U.attached_accessory.flags_inv & HIDEACCESSORY) && !(U.flags_inv & HIDEACCESSORY))
+	// 			accessory_msg += " with [icon2html(U.attached_accessory, user)] \a [U.attached_accessory]"
+	// 		if(U.attached_accessory_b && !(U.attached_accessory_b.flags_inv & HIDEACCESSORY) && !(U.flags_inv & HIDEACCESSORY))
+	// 			accessory_msg += ", [icon2html(U.attached_accessory_b, user)] \a [U.attached_accessory_b]"
+	// 		if(U.attached_accessory_c && !(U.attached_accessory_c.flags_inv & HIDEACCESSORY) && !(U.flags_inv & HIDEACCESSORY))
+	// 			accessory_msg += ", [icon2html(U.attached_accessory_c, user)] \a [U.attached_accessory_c]"
 
-		. += "[t_He] [t_is] wearing [w_uniform.get_examine_string(user)][accessory_msg]."
-	//head
-	if(head)
-		. += "[t_He] [t_is] wearing [head.get_examine_string(user)] on [t_his] head."
-	//suit/armor
-	if(wear_suit)
-		. += "[t_He] [t_is] wearing [wear_suit.get_examine_string(user)]."
-		//suit/armor storage
-		if(s_store && !(SLOT_S_STORE in obscured))
-			. += "[t_He] [t_is] carrying [s_store.get_examine_string(user)] on [t_his] [wear_suit.name]."
-	//back
-	if(back)
-		. += "[t_He] [t_has] [back.get_examine_string(user)] on [t_his] back."
+	// 	. += "[t_He] [t_is] wearing [w_uniform.get_examine_string(user)][accessory_msg]."
+	// //head
+	// if(head)
+	// 	. += "[t_He] [t_is] wearing [head.get_examine_string(user)] on [t_his] head."
+	// //suit/armor
+	// if(wear_suit)
+	// 	. += "[t_He] [t_is] wearing [wear_suit.get_examine_string(user)]."
+	// 	//suit/armor storage
+	// 	if(s_store && !(SLOT_S_STORE in obscured))
+	// 		. += "[t_He] [t_is] carrying [s_store.get_examine_string(user)] on [t_his] [wear_suit.name]."
+	// //back
+	// if(back)
+	// 	. += "[t_He] [t_has] [back.get_examine_string(user)] on [t_his] back."
 
-	//Hands
-	for(var/obj/item/I in held_items)
-		if(!(I.item_flags & ABSTRACT))
-			. += "[t_He] [t_is] holding [I.get_examine_string(user)] in [t_his] [get_held_index_name(get_held_index_of_item(I))]."
+	// //Hands
+	// for(var/obj/item/I in held_items)
+	// 	if(!(I.item_flags & ABSTRACT))
+	// 		. += "[t_He] [t_is] holding [I.get_examine_string(user)] in [t_his] [get_held_index_name(get_held_index_of_item(I))]."
 
-	//gloves
-	if(gloves && !(SLOT_GLOVES in obscured))
-		. += "[t_He] [t_has] [gloves.get_examine_string(user)] on [t_his] hands."
-	else if(length(blood_DNA))
-		var/hand_number = get_num_arms(FALSE)
-		if(hand_number)
-			. += span_warning("[t_He] [t_has] [hand_number > 1 ? "" : "a"] blood-stained hand[hand_number > 1 ? "s" : ""]!")
+	// //gloves
+	// if(gloves && !(SLOT_GLOVES in obscured))
+	// 	. += "[t_He] [t_has] [gloves.get_examine_string(user)] on [t_his] hands."
+	// else if(length(blood_DNA))
+	// 	var/hand_number = get_num_arms(FALSE)
+	// 	if(hand_number)
+	// 		. += span_warning("[t_He] [t_has] [hand_number > 1 ? "" : "a"] blood-stained hand[hand_number > 1 ? "s" : ""]!")
 
-	//handcuffed?
-	if(handcuffed)
-		if(istype(handcuffed, /obj/item/restraints/handcuffs/cable))
-			. += span_warning("[t_He] [t_is] [icon2html(handcuffed, user)] restrained with cable!")
-		else
-			. += span_warning("[t_He] [t_is] [icon2html(handcuffed, user)] handcuffed!")
+	// //handcuffed?
+	// if(handcuffed)
+	// 	if(istype(handcuffed, /obj/item/restraints/handcuffs/cable))
+	// 		. += span_warning("[t_He] [t_is] [icon2html(handcuffed, user)] restrained with cable!")
+	// 	else
+	// 		. += span_warning("[t_He] [t_is] [icon2html(handcuffed, user)] handcuffed!")
 
-	//belt
-	if(belt)
-		. += "[t_He] [t_has] [belt.get_examine_string(user)] about [t_his] waist."
+	// //belt
+	// if(belt)
+	// 	. += "[t_He] [t_has] [belt.get_examine_string(user)] about [t_his] waist."
 
-	//shoes
-	if(shoes && !(SLOT_SHOES in obscured))
-		. += "[t_He] [t_is] wearing [shoes.get_examine_string(user)] on [t_his] feet."
+	// //shoes
+	// if(shoes && !(SLOT_SHOES in obscured))
+	// 	. += "[t_He] [t_is] wearing [shoes.get_examine_string(user)] on [t_his] feet."
 
-	//mask
-	if(wear_mask && !(SLOT_MASK in obscured))
-		. += "[t_He] [t_has] [wear_mask.get_examine_string(user)] on [t_his] face."
+	// //mask
+	// if(wear_mask && !(SLOT_MASK in obscured))
+	// 	. += "[t_He] [t_has] [wear_mask.get_examine_string(user)] on [t_his] face."
 
-	if(wear_neck && !(SLOT_NECK in obscured))
-		. += "[t_He] [t_is] wearing [wear_neck.get_examine_string(user)]"
+	// if(wear_neck && !(SLOT_NECK in obscured))
+	// 	. += "[t_He] [t_is] wearing [wear_neck.get_examine_string(user)]"
 
-	//eyes
-	if(!(SLOT_GLASSES in obscured))
-		if(glasses)
-			. += "[t_He] [t_has] [glasses.get_examine_string(user)] covering [t_his] eyes."
-		else if((left_eye_color == BLOODCULT_EYE || right_eye_color == BLOODCULT_EYE) && iscultist(src) && HAS_TRAIT(src, TRAIT_CULT_EYES))
-			. += span_warning("<B>[t_His] eyes are glowing an unnatural red!</B>")
-		else if(HAS_TRAIT(src, TRAIT_HIJACKER))
-			var/obj/item/implant/hijack/H = user.getImplant(/obj/item/implant/hijack)
-			if (H && !H.stealthmode && H.toggled)
-				. += "<b><font color=orange>[t_His] eyes are flickering a bright yellow!</font></b>"
-		else if(is_brainwashed(src)) //FO13 Change
-			. += "<b><font color=red>[t_His] eyes have a far away and dazed look to them.</font></b>"
+	// //eyes
+	// if(!(SLOT_GLASSES in obscured))
+	// 	if(glasses)
+	// 		. += "[t_He] [t_has] [glasses.get_examine_string(user)] covering [t_his] eyes."
+	// 	else if((left_eye_color == BLOODCULT_EYE || right_eye_color == BLOODCULT_EYE) && iscultist(src) && HAS_TRAIT(src, TRAIT_CULT_EYES))
+	// 		. += span_warning("<B>[t_His] eyes are glowing an unnatural red!</B>")
+	// 	else if(HAS_TRAIT(src, TRAIT_HIJACKER))
+	// 		var/obj/item/implant/hijack/H = user.getImplant(/obj/item/implant/hijack)
+	// 		if (H && !H.stealthmode && H.toggled)
+	// 			. += "<b><font color=orange>[t_His] eyes are flickering a bright yellow!</font></b>"
+	// 	else if(is_brainwashed(src)) //FO13 Change
+	// 		. += "<b><font color=red>[t_His] eyes have a far away and dazed look to them.</font></b>"
 
-	//ears
-	if(ears && !(SLOT_EARS in obscured))
-		. += "[t_He] [t_has] [ears.get_examine_string(user)] on [t_his] ears."
+	// //ears
+	// if(ears && !(SLOT_EARS in obscured))
+	// 	. += "[t_He] [t_has] [ears.get_examine_string(user)] on [t_his] ears."
 
-	//ID
-	if(wear_id)
-		. += "[t_He] [t_is] wearing [wear_id.get_examine_string(user)]."
+	// //ID
+	// if(wear_id)
+	// 	. += "[t_He] [t_is] wearing [wear_id.get_examine_string(user)]."
 
 	//Status effects
 	var/effects_exam = status_effect_examines()
@@ -497,13 +497,13 @@ GLOBAL_LIST_INIT(personalitytrait2description, list(
 		if(src != user && HAS_TRAIT(L, TRAIT_EMPATH) && !appears_dead)
 			if (a_intent != INTENT_HELP)
 				msg += "[t_He] seem[p_s()] to be on guard.\n"
-			var/datum/component/mood/mood = GetComponent(/datum/component/mood)
-			if(mood.sanity <= SANITY_DISTURBED)
-				msg += "[t_He] seem[p_s()] distressed.\n"
-				SEND_SIGNAL(user, COMSIG_ADD_MOOD_EVENT, "empath", /datum/mood_event/sad_empath, src)
-			if(mood.shown_mood >= 6) //So roundstart people aren't all "happy" and that antags don't show their true happiness.
-				msg += "<span class='nicegreen'>[t_He] seem[p_s()] to have had something nice happen to [t_him] recently.</span>\n"
-				SEND_SIGNAL(user, COMSIG_ADD_MOOD_EVENT, "empathH", /datum/mood_event/happy_empath, src)
+			// var/datum/component/mood/mood = GetComponent(/datum/component/mood)
+			// if(mood.sanity <= SANITY_DISTURBED)
+			// 	msg += "[t_He] seem[p_s()] distressed.\n"
+			// 	SEND_SIGNAL(user, COMSIG_ADD_MOOD_EVENT, "empath", /datum/mood_event/sad_empath, src)
+			// if(mood.shown_mood >= 6) //So roundstart people aren't all "happy" and that antags don't show their true happiness.
+			// 	msg += "<span class='nicegreen'>[t_He] seem[p_s()] to have had something nice happen to [t_him] recently.</span>\n"
+			// 	SEND_SIGNAL(user, COMSIG_ADD_MOOD_EVENT, "empathH", /datum/mood_event/happy_empath, src)
 			if (HAS_TRAIT(src, TRAIT_BLIND))
 				msg += "[t_He] appear[p_s()] to be staring off into space.\n"
 			if (HAS_TRAIT(src, TRAIT_DEAF))
@@ -563,7 +563,121 @@ GLOBAL_LIST_INIT(personalitytrait2description, list(
 		. += span_warning("[msg.Join("")]")
 
 	if(HAS_TRAIT(src, TRAIT_JIGGLY_ASS))
-		. += span_notice("[t_His] butt could use a firm smack.</span>")
+		. += span_love("[t_His] butt could use a firm smack.</span>")
+
+//adventure quirk examines
+	//bruiser
+	if(HAS_TRAIT(src, TRAIT_ADV_BRUISER))
+		. += span_purple("[t_He] looks like [t_He]'d beat something up!</span>")
+	//fighter
+	if(HAS_TRAIT(src, TRAIT_ADV_FIGHTER))
+		. += span_purple("[t_He] looks like a natural born fighter!</span>")
+	//gunner
+	if(HAS_TRAIT(src, TRAIT_ADV_GUNNER))
+		. += span_purple("[t_He] looks good with a gun!</span>")
+	//healer
+	if(HAS_TRAIT(src, TRAIT_ADV_HEALER))
+		. += span_purple("[t_He] looks like [t_He] know's how to fix people up!</span>")
+	//rogue
+	if(HAS_TRAIT(src, TRAIT_ADV_ROGUE))
+		. += span_purple("[t_He] looks quick and stealthy!</span>")
+	//tank
+	if(HAS_TRAIT(src, TRAIT_ADV_TANK))
+		. += span_purple("[t_He] looks tougher than nails!</span>")
+	//LFG
+	if(HAS_TRAIT(src, TRAIT_ADV_LFG))
+		. += span_purple("[t_He] is looking for someone to adventure with!</span>")
+
+//erp/rp term specification
+	//long term rp/erp
+	if(HAS_TRAIT(src, TRAIT_RPLONGTERM))
+		. += span_green("[t_He] wants long term RP/ERP relationships!</span>")
+	//short term
+	if(HAS_TRAIT(src, TRAIT_RPLONGTERM))
+		. += span_green("[t_He] wants short term RP/ERP relationships!</span>")
+
+
+//quick physical info
+	//big ass
+	if(HAS_TRAIT(src, TRAIT_BIGBUTT))
+		. += span_neovgre_small("[t_He] has a big backside!</span>")
+	//booba
+	if(HAS_TRAIT(src, TRAIT_BIGBOOBS))
+		. += span_neovgre_small("[t_He] has big boobs!</span>")
+	//balls
+	if(HAS_TRAIT(src, TRAIT_BIGBALLS))
+		. += span_neovgre_small("[t_He] has stuffed pants!</span>")
+	//weenus
+	if(HAS_TRAIT(src, TRAIT_BIGWEENIE))
+		. += span_neovgre_small("[t_He] might buy cucumbers!</span>")
+	
+	
+
+
+//The kissers
+	//anykisser
+	if(HAS_TRAIT(src, TRAIT_ERPANYKISSER))
+		. += span_love("[t_He]'d kiss just about anyone!</span>")
+
+	//boykisser
+	if(HAS_TRAIT(src, TRAIT_ERPBOYKISSER))
+		. += span_love("[t_He]'d prefer boys!</span>")
+
+	//girlkisser
+	if(HAS_TRAIT(src, TRAIT_ERPGIRLKISSER))
+		. += span_love("[t_He]'d prefer girls!</span>")
+
+//The positioners
+	//switch
+	if(HAS_TRAIT(src, TRAIT_ERPSWITCH))
+		. += span_love("[t_He] is a switch!</span>")
+	//top
+	if(HAS_TRAIT(src, TRAIT_ERPTOP))
+		. += span_love("[t_He] is a top!</span>")
+	//bottom
+	if(HAS_TRAIT(src, TRAIT_ERPBOTTOM))
+		. += span_love("[t_He] is a bottom!</span>")
+
+//The stylers
+	//no erp
+	if(HAS_TRAIT(src, TRAIT_NOERP))
+		. += span_clown("[t_He] doesn't ERP!</span>")
+	//vanilla
+	if(HAS_TRAIT(src, TRAIT_VANILLAERP))
+		. += span_clown("[t_He] prefers vanilla scenes!</span>")
+	//rough
+	if(HAS_TRAIT(src, TRAIT_ROUGHERP))
+		. += span_clown("[t_He] prefers rougher scenes!</span>")
+	//extreme
+	if(HAS_TRAIT(src, TRAIT_EXTREMEERP))
+		. += span_clown("[t_He] prefers extreme scenes!</span>")
+	//snuggler
+	if(HAS_TRAIT(src, TRAIT_SNUGGLER))
+		. += span_clown("[t_He] is a softy that wants snuggles for sure.")
+	//orally fixated
+	if(HAS_TRAIT(src, TRAIT_ORAL_FIXATION))
+		. += span_clown("[t_He] seems a bit orally fixated.")
+	//orally fixated
+	if(HAS_TRAIT(src, TRAIT_RISKY_BUSINESS))
+		. += span_clown("[t_He] is into creampies.")
+
+//The partners
+	//feral
+	if(HAS_TRAIT(src, TRAIT_FERALERP))
+		. += span_love("[t_He] is okay with ferals!</span>")
+	//robot
+	if(HAS_TRAIT(src, TRAIT_ROBOTERP))
+		. += span_love("[t_He] is okay with robots!</span>")
+	//vore
+	if(HAS_TRAIT(src, TRAIT_VOREERP))
+		. += span_love("[t_He] is okay with vore!</span>")
+	//fat
+	if(HAS_TRAIT(src, TRAIT_FATERP))
+		. += span_love("[t_He] is okay with fatplay!</span>")
+	//feeder
+	if(HAS_TRAIT(src, TRAIT_DANIMAL))
+		. += span_love("[t_He] is okay with feeding play!</span>")
+
 
 	var/trait_exam = common_trait_examine()
 	if (!isnull(trait_exam))
@@ -632,6 +746,7 @@ GLOBAL_LIST_INIT(personalitytrait2description, list(
 		. += span_alert("[t_He] [t_has] is looking for PVP encounters! If you're looking for a fight, they're the one to go to!")
 
 	. += span_green("Right click and select flirt with me to [span_love("maybe get my attention!~")]")
+	
 	. += span_green("Ctrl-Shift click me for [span_love("special interactions!~")]")
 
 	if(has_status_effect(STATUS_EFFECT_ADMINSLEEP))
@@ -671,8 +786,8 @@ GLOBAL_LIST_INIT(personalitytrait2description, list(
 				continue
 			/// The return of the cursed href link!!!
 			msg += {"<a href='?src=[REF(user)];read_personality_trait=[triat];>[emoji]</a>"}
-	if(!isnull(msg))
-		out = "[span_info("They have some cool traits! Click the emojis to learn more!")]\n"
+	// if(!isnull(msg))
+		//out = "[span_info("They have some cool traits! Click the emojis to learn more!")]\n"
 	out += msg
 	out +="\n"
 	return out

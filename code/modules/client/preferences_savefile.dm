@@ -77,6 +77,14 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 				chat_toggles = sanitize_integer(chat_toggles, 0, INFINITY, TOGGLES_DEFAULT_CHAT)
 				WRITE_FILE(S["chat_toggles"], chat_toggles)
 				current_revision |= PMR_DAN_MESSED_UP_CHATPREFS
+			if(PMR_RUNECHAT_LENGTHENING)
+				S["max_chat_length"] >> max_chat_length
+				max_chat_length = 500
+				WRITE_FILE(S["max_chat_length"], max_chat_length)
+				S["chat_width"] >> chat_width
+				chat_width = 300
+				WRITE_FILE(S["chat_width"], chat_width)
+				current_revision |= PMR_RUNECHAT_LENGTHENING
 	current_revision = PREFERENCES_MASTER_REVISIONLIST
 	WRITE_FILE(S["current_revision"], safe_json_encode(current_revision))
 	return TRUE
@@ -122,6 +130,10 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 				// WRITE_FILE(S["faved_interactions"], faved_interactions)
 				current_version |= PMC_UNBREAK_FAVORITE_PLAPS
 			if(PMC_MY_PDA_FLIES_IN_FULL_COLOR) // i broke it =3
+				pda_skin = "Random!"
+				WRITE_FILE(S["pda_skin"], pda_skin)
+				current_version |= PMC_MY_PDA_FLIES_IN_FULL_COLOR
+			if(PMC_MOMMYCHAT_IS_COOL) // i broke it =3
 				pda_skin = "Random!"
 				WRITE_FILE(S["pda_skin"], pda_skin)
 				current_version |= PMC_MY_PDA_FLIES_IN_FULL_COLOR
@@ -227,6 +239,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["hotkeys"]			>> hotkeys
 	S["chat_on_map"]		>> chat_on_map
 	S["max_chat_length"]	>> max_chat_length
+	S["chat_width"]			>> chat_width
 	S["see_chat_non_mob"]	>> see_chat_non_mob
 	READ_FILE(S["see_rc_emotes"] , see_rc_emotes)
 	S["color_chat_log"] >> color_chat_log
@@ -268,8 +281,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["arousable"]			>> arousable
 	S["screenshake"]		>> screenshake
 	S["damagescreenshake"]	>> damagescreenshake
-	// S["widescreenpref"]		>> widescreenpref
-	widescreenpref = TRUE
+	S["widescreenpref"]		>> widescreenpref
 	S["end_of_round_deathmatch"] >> end_of_round_deathmatch
 	READ_FILE(S["matchmaking_prefs"], matchmaking_prefs)
 	S["autostand"]			>> autostand
@@ -281,6 +293,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["aghost_squelches"]		>> aghost_squelches
 	S["genital_whitelist"]		>> genital_whitelist
 	S["see_furry_dating_sim"]		>> see_furry_dating_sim
+	S["see_pfp_max_hight"]		>> see_pfp_max_hight
+	S["see_pfp_max_widht"]		>> see_pfp_max_widht
 
 	S["lockouts"]	>> lockouts // my bans!
 	S["admin_wire_tap"]	>> admin_wire_tap // my bans!
@@ -303,11 +317,12 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	ooccolor                = sanitize_ooccolor(sanitize_hexcolor(ooccolor, 6, 1, initial(ooccolor)))
 	lastchangelog           = sanitize_text(lastchangelog, initial(lastchangelog))
 	genital_whitelist       = sanitize_text(genital_whitelist, initial(genital_whitelist))
-	input_mode_hotkey       = sanitize_text(input_mode_hotkey, initial(input_mode_hotkey))
+	input_mode_hotkey       = "Tab" // *puts cup under disk drive* Tab, please! //sanitize_text(input_mode_hotkey, initial(input_mode_hotkey))
 	UI_style                = sanitize_inlist(UI_style, GLOB.available_ui_styles, GLOB.available_ui_styles[1])
 	hotkeys                 = sanitize_integer(hotkeys, 0, 1, initial(hotkeys))
 	chat_on_map             = sanitize_integer(chat_on_map, 0, 1, initial(chat_on_map))
 	max_chat_length         = sanitize_integer(max_chat_length, 1, CHAT_MESSAGE_MAX_LENGTH, initial(max_chat_length))
+	chat_width              = sanitize_integer(chat_width, 1, CHAT_MESSAGE_MAX_WIDTH, initial(max_chat_length))
 	see_chat_non_mob        = sanitize_integer(see_chat_non_mob, 0, 1, initial(see_chat_non_mob))
 	see_rc_emotes           = sanitize_integer(see_rc_emotes, FALSE, TRUE, initial(see_rc_emotes))
 	color_chat_log          = sanitize_integer(color_chat_log, FALSE, TRUE, initial(color_chat_log))
@@ -348,6 +363,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	aghost_squelches        = sanitize_islist(aghost_squelches, list())
 	admin_wire_tap          = sanitize_integer(admin_wire_tap, TRUE)
 	see_furry_dating_sim    = sanitize_integer(see_furry_dating_sim, TRUE)
+	see_pfp_max_hight           = sanitize_integer(see_pfp_max_hight, 0, 5000, 300)
+	see_pfp_max_widht            = sanitize_integer(see_pfp_max_widht, 0, 5000, 300)
 
 	verify_keybindings_valid()		// one of these days this will runtime and you'll be glad that i put it in a different proc so no one gets their saves wiped
 
@@ -415,6 +432,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["hotkeys"], hotkeys)
 	WRITE_FILE(S["chat_on_map"], chat_on_map)
 	WRITE_FILE(S["max_chat_length"], max_chat_length)
+	WRITE_FILE(S["chat_width"], chat_width)
 	WRITE_FILE(S["see_chat_non_mob"], see_chat_non_mob)
 	WRITE_FILE(S["see_rc_emotes"], see_rc_emotes)
 	WRITE_FILE(S["color_chat_log"], color_chat_log)
@@ -452,12 +470,14 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["key_bindings"], key_bindings)
 	WRITE_FILE(S["modless_key_bindings"], modless_key_bindings)
 	WRITE_FILE(S["see_furry_dating_sim"], see_furry_dating_sim)
+	WRITE_FILE(S["see_pfp_max_hight"], see_pfp_max_hight)
+	WRITE_FILE(S["see_pfp_max_widht"], see_pfp_max_widht)
 
 	//citadel code
 	WRITE_FILE(S["screenshake"], screenshake)
 	WRITE_FILE(S["damagescreenshake"], damagescreenshake)
 	WRITE_FILE(S["arousable"], arousable)
-	WRITE_FILE(S["widescreenpref"], TRUE)
+	WRITE_FILE(S["widescreenpref"], widescreenpref)
 	WRITE_FILE(S["end_of_round_deathmatch"], end_of_round_deathmatch)
 	WRITE_FILE(S["autostand"], autostand)
 	WRITE_FILE(S["cit_toggles"], cit_toggles)
@@ -919,6 +939,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	ProfilePics = islist(pfp_list) ? pfp_list : list()
 	var/list/milfhub = safe_json_decode(S["mommychat_settings"])
 	mommychat_settings = islist(milfhub) ? milfhub : list()
+	S["visualchat_use_contrasting_color"]		>> visualchat_use_contrasting_color // Hair gradients electric boogaloo 2!!
+	S["visualchat_see_horny_radio"]		>> visualchat_see_horny_radio // Hair gradients electric boogaloo 2!!
 
 	S["gradient_color"]		>> features_override["grad_color"] // Hair gradients!
 	S["gradient_style"]		>> features_override["grad_style"] // Hair gradients electric boogaloo 2!!
@@ -1015,19 +1037,21 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["historical_banked_points"] >> historical_banked_points
 
 	//sanitize data
-	show_in_directory          = sanitize_integer(show_in_directory, 0, 1, initial(show_in_directory))
-	directory_tag              = sanitize_inlist(directory_tag, GLOB.char_directory_vore_tags, initial(directory_tag))
-	directory_erptag           = sanitize_inlist(directory_erptag, GLOB.char_directory_erptags, initial(directory_erptag))
-	directory_ad               = strip_html_simple(directory_ad, MAX_FLAVOR_LEN)
-	faved_interactions         = sanitize_islist(faved_interactions, list())
-	saved_finished_quests      = sanitize_islist(saved_finished_quests, list())
-	saved_active_quests        = sanitize_islist(saved_active_quests, list())
-	dm_open                    = sanitize_integer(dm_open, TRUE)
-	needs_a_friend             = sanitize_integer(needs_a_friend, TRUE)
-	saved_unclaimed_points     = sanitize_integer(saved_unclaimed_points,    0, INFINITY, initial(saved_unclaimed_points))
-	number_of_finished_quests  = sanitize_integer(number_of_finished_quests, 0, INFINITY, initial(number_of_finished_quests))
-	historical_banked_points   = sanitize_integer(historical_banked_points,  0, INFINITY, initial(historical_banked_points))
-	last_quest_login           = sanitize_integer(last_quest_login,          5, INFINITY, world.realtime)
+	visualchat_use_contrasting_color  = sanitize_integer(visualchat_use_contrasting_color, 0, 1, initial(visualchat_use_contrasting_color))
+	visualchat_see_horny_radio        = sanitize_integer(visualchat_see_horny_radio, 0, 1, initial(visualchat_see_horny_radio))
+	show_in_directory                 = sanitize_integer(show_in_directory, 0, 1, initial(show_in_directory))
+	directory_tag                     = sanitize_inlist(directory_tag, GLOB.char_directory_vore_tags, initial(directory_tag))
+	directory_erptag                  = sanitize_inlist(directory_erptag, GLOB.char_directory_erptags, initial(directory_erptag))
+	directory_ad                      = strip_html_simple(directory_ad, MAX_FLAVOR_LEN)
+	faved_interactions                = sanitize_islist(faved_interactions, list())
+	saved_finished_quests             = sanitize_islist(saved_finished_quests, list())
+	saved_active_quests               = sanitize_islist(saved_active_quests, list())
+	dm_open                           = sanitize_integer(dm_open, TRUE)
+	needs_a_friend                    = sanitize_integer(needs_a_friend, TRUE)
+	saved_unclaimed_points            = sanitize_integer(saved_unclaimed_points,    0, INFINITY, initial(saved_unclaimed_points))
+	number_of_finished_quests         = sanitize_integer(number_of_finished_quests, 0, INFINITY, initial(number_of_finished_quests))
+	historical_banked_points          = sanitize_integer(historical_banked_points,  0, INFINITY, initial(historical_banked_points))
+	last_quest_login                  = sanitize_integer(last_quest_login,          5, INFINITY, world.realtime)
 	if(features["chat_color"] == "whoopsie")
 		features["chat_color"] = random_color()
 
@@ -1589,6 +1613,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	var/milfjson = safe_json_encode(mommychat_settings)
 	if(milfjson)
 		WRITE_FILE(S["mommychat_settings"], milfjson)
+	WRITE_FILE(S["visualchat_use_contrasting_color"],		visualchat_use_contrasting_color)
+	WRITE_FILE(S["visualchat_see_horny_radio"],		visualchat_see_horny_radio)
 
 	WRITE_FILE(S["creature_profilepic"],		creature_profilepic)
 	WRITE_FILE(S["creature_pfphost"],			creature_pfphost)
