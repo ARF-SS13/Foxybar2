@@ -98,7 +98,7 @@
 		"body_model" = MALE,\
 		"body_size" = RESIZE_DEFAULT_SIZE,\
 		"body_width" = RESIZE_DEFAULT_WIDTH,\
-		"color_scheme" = ADVANCED_CHARACTER_COLORING,\
+		"color_scheme" = OLD_CHARACTER_COLORING,\
 		"chat_color" = "whoopsie")
 
 GLOBAL_LIST_EMPTY(preferences_datums)
@@ -109,7 +109,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	var/path
 	var/vr_path
 	var/default_slot = 1				//Holder so it doesn't default to slot 1, rather the last one used
-	var/max_save_slots = 5
+	var/max_save_slots = 30
 	var/lockdown = FALSE // prevents any funny business while we delete
 
 	//non-preference stuff
@@ -148,9 +148,12 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	var/buttons_locked = FALSE
 	var/hotkeys = FALSE
 	var/chat_on_map = TRUE
-	var/max_chat_length = CHAT_MESSAGE_MAX_LENGTH
+	var/max_chat_length = CHAT_MESSAGE_LENGTH_DEFAULT
+	var/chat_width = CHAT_MESSAGE_WIDTH
 	var/see_chat_non_mob = TRUE
 	var/see_furry_dating_sim = TRUE
+	var/visualchat_see_horny_radio = TRUE
+	var/visualchat_use_contrasting_color = TRUE
 	///Whether emotes will be displayed on runechat. Requires chat_on_map to have effect. Boolean.
 	var/see_rc_emotes = TRUE
 	///Whether to apply mobs' runechat color to the chat log as well
@@ -299,6 +302,9 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	var/creature_body_size = 1
 	var/creature_fuzzy = FALSE
 
+	var/see_pfp_max_hight = 300
+	var/see_pfp_max_widht = 300
+
 	var/list/ProfilePics = list(
 		list(
 			"Mode" = MODE_PROFILE_PIC,
@@ -399,7 +405,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	var/icon/bgstate = "steel"
 	var/list/bgstate_options = list("000", "midgrey", "FFF", "white", "steel", "techmaint", "dark", "plating", "reinforced")
 
-	var/show_mismatched_markings = TRUE //determines whether or not the markings lists should show markings that don't match the currently selected species. Intentionally left unsaved.
+	var/show_mismatched_markings = FALSE //determines whether or not the markings lists should show markings that don't match the currently selected species. Intentionally left unsaved.
 
 	var/no_tetris_storage = FALSE
 
@@ -415,7 +421,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	var/screenshake = 100
 	var/damagescreenshake = 2
 	var/arousable = TRUE
-	var/widescreenpref = TRUE
+	var/widescreenpref = FALSE
 	var/end_of_round_deathmatch = FALSE
 	var/autostand = TRUE
 	var/auto_ooc = FALSE
@@ -525,7 +531,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	dat += "<a href='?_src_=prefs;preference=tab;tab=[ERP_TAB]' [current_tab == ERP_TAB ? "class='linkOn'" : ""]>Underlying Appearance</a>"
 	dat += "<a href='?_src_=prefs;preference=tab;tab=[LOADOUT_TAB]' [current_tab == LOADOUT_TAB ? "class='linkOn'" : ""]>Loadout</a>"
 	dat += "<a href='?_src_=prefs;preference=tab;tab=[GAME_PREFERENCES_TAB]' [current_tab == GAME_PREFERENCES_TAB ? "class='linkOn'" : ""]>Game Preferences</a>"
-	dat += "<a href='?_src_=prefs;preference=tab;tab=[CONTENT_PREFERENCES_TAB]' [current_tab == CONTENT_PREFERENCES_TAB ? "class='linkOn'" : ""]>Adult Preferences</a>"
+	dat += "<a href='?_src_=prefs;preference=tab;tab=[CONTENT_PREFERENCES_TAB]' [current_tab == CONTENT_PREFERENCES_TAB ? "class='linkOn'" : ""]>Content Preferences</a>"
 	dat += "<a href='?_src_=prefs;preference=tab;tab=[KEYBINDINGS_TAB]' [current_tab == KEYBINDINGS_TAB ? "class='linkOn'" : ""]>Keybindings</a>"
 
 	if(!path)
@@ -575,10 +581,10 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 				dat += "<h2>Configure Quirks</a></h2><br></center>"
 				dat += "</a>"
 				dat += "<center><b>Current Quirks:</b> [get_my_quirks()]</center>"
-			dat += "<center><h2>S.P.E.C.I.A.L.</h2>"
+			dat += "<center><h2>Character Atributes</h2>"
 			dat += "<a href='?_src_=prefs;preference=special;task=menu'>Allocate Points</a><br></center>"
 			//Left Column
-			dat += "<table><tr><td width='30%'valign='top'>"
+			dat += "<table><tr><td width='70%'valign='top'>"
 			dat += "<h2>Identity</h2>"
 			if(jobban_isbanned(user, "appearance"))
 				dat += "<b>You are banned from using custom names and appearances. You can continue to adjust your characters, but you will be randomised once you join the game.</b><br>"
@@ -592,8 +598,8 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			dat += "<b>Top/Bottom/Switch:</b> <a href='?_src_=prefs;preference=tbs;task=input'>[tbs]</a><BR>"
 			dat += "<b>Orientation:</b> <a href='?_src_=prefs;preference=kisser;task=input'>[kisser]</a><BR>"
 			dat += "</td>"
-/*			//Middle Column
-			dat +="<td width='30%' valign='top'>"
+			//Middle Column
+			dat +="<td width='25%' valign='top'>"
 			dat += "<h2>Matchmaking preferences:</h2>"
 			if(SSmatchmaking.initialized)
 				for(var/datum/matchmaking_pref/match_pref as anything in SSmatchmaking.all_match_types)
@@ -607,14 +613,13 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 				dat += "<b>Loading matchmaking preferences...</b><br>"
 				dat += "<b>Refresh once the game has finished setting up...</b><br>"
 			dat += "</td>"
-*/
 			//Right column
-			dat +="<td width='30%' valign='top'>"
-			dat += "<a href='?_src_=prefs;preference=setup_hornychat;task=input'>Configure VisualChat / Profile Pictures!</a><BR>"
-			// dat += "<h2>Profile Picture ([pfphost]):</h2><BR>"
-			var/pfplink = SSchat.GetPicForMode(user, MODE_PROFILE_PIC)
-			dat += "<b>Picture:</b> <a href='?_src_=prefs;preference=setup_hornychat;task=input'>[pfplink ? "<img src=[pfplink] width='125' height='auto' max-height='300'>" : "Upload a picture!"]</a><BR>"
-			dat += "</td>"
+			// dat +="<td width='30%' valign='top'>"
+			// // dat += "<h2>Profile Picture ([pfphost]):</h2><BR>"
+			// // dat += "<b>Picture:</b> <a href='?_src_=prefs;preference=ProfilePicture;task=input'>[profilePicture ? "<img src=[PfpHostLink(profilePicture, pfphost)] width='125' height='auto' max-height='300'>" : "Upload a picture!"]</a><BR>"
+			// dat += "<h2>Simple Creature Profile Picture ([creature_pfphost]):</h2><BR>"
+			// dat += "<b>Picture:</b> <a href='?_src_=prefs;preference=CreatureProfilePicture;task=input'>[creature_profilepic ? "<img src=[PfpHostLink(creature_profilepic, creature_pfphost)] width='125' height='auto' max-height='300'>" : "Upload a picture!"]</a><BR>"
+			// dat += "</td>"
 			/*
 			dat += "<b>Special Names:</b><BR>"
 			var/old_group
@@ -824,6 +829,8 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			// assume you can only have mam markings or regular markings or none, never both
 			var/marking_type
 			dat += APPEARANCE_CATEGORY_COLUMN
+			dat += "<b>Advanced Coloring:</b><a style='display:block;width:100px' href='?_src_=prefs;preference=color_scheme;task=input'>[(features["color_scheme"] == ADVANCED_CHARACTER_COLORING) ? "Enabled" : "Disabled"]</a>"
+			dat += "<b>Mismatched Markings:</b><a style='display:block;width:100px' href='?_src_=prefs;preference=mismatched_markings;task=input'>[show_mismatched_markings ? "Yes" : "No"]</a>"
 			if(parent.can_have_part("mam_body_markings"))
 				marking_type = "mam_body_markings"
 			if(marking_type)
@@ -1085,15 +1092,15 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			else
 				dat += "[TextPreview(features["ooc_notes"])]...<br>"
 
-			// dat += "<a href='?_src_=prefs;preference=background_info_notes;task=input'><b>Set Background Info Notes</b></a><br>"
-			// var/background_info_notes_len = length(features["background_info_notes"])
-			// if(background_info_notes_len <= 40)
-			// 	if(!background_info_notes_len)
-			// 		dat += "\[...\]<br>"
-			// 	else
-			// 		dat += "[features["background_info_notes"]]<br>"
-			// else
-			// 	dat += "[TextPreview(features["background_info_notes"])]...<br>"
+			dat += "<a href='?_src_=prefs;preference=background_info_notes;task=input'><b>Set Background Info Notes</b></a><br>"
+			var/background_info_notes_len = length(features["background_info_notes"])
+			if(background_info_notes_len <= 40)
+				if(!background_info_notes_len)
+					dat += "\[...\]<br>"
+				else
+					dat += "[features["background_info_notes"]]<br>"
+			else
+				dat += "[TextPreview(features["background_info_notes"])]...<br>"
 
 			//outside link stuff
 			dat += "<h3>Outer hyper-links settings</h3>"
@@ -1110,12 +1117,45 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			dat += "</td>"
 			dat += APPEARANCE_CATEGORY_COLUMN
 
-
+			//Start Creature Character
+			dat += "<h2>Simple Creature Character</h2>"
+			dat += "<b>Creature Species</b><a style='display:block;width:100px' href='?_src_=prefs;preference=creature_species;task=input'>[creature_species ? creature_species : "Eevee"]</a><BR>"
+			dat += "<b>Creature Name</b><a style='display:block;width:100px' href='?_src_=prefs;preference=creature_name;task=input'>[creature_name ? creature_name : "Eevee"]</a><BR>"
+			/*
+			if(CONFIG_GET(number/body_size_min) != CONFIG_GET(number/body_size_max))
+				dat += "<b>Size:</b> <a href='?_src_=prefs;preference=creature_body_size;task=input'>[creature_body_size*100]%</a><br>"
+			dat += "<b>Scaling:</b> <a href='?_src_=prefs;preference=creature_toggle_fuzzy;task=input'>[creature_fuzzy ? "Fuzzy" : "Sharp"]</a><br>"
+			*/
+			dat += "<a href='?_src_=prefs;preference=creature_flavor_text;task=input'><b>Set Creature Examine Text</b></a><br>"
+			if(length(creature_flavor_text) <= 40)
+				if(!length(creature_flavor_text))
+					dat += "\[...\]<br>"
+				else
+					dat += "[creature_flavor_text]<br>"
+			else
+				dat += "[TextPreview(creature_flavor_text)]...<br>"
+			dat += "<a href='?_src_=prefs;preference=creature_ooc;task=input'><b>Set Creature OOC Notes</b></a><br>"
+			if(length(creature_ooc) <= 40)
+				if(!length(creature_ooc))
+					dat += "\[...\]<br>"
+				else
+					dat += "[creature_ooc]<br>"
+			else
+				dat += "[TextPreview(creature_ooc)]...<br>"
+			if(creature_species)
+				if(!LAZYLEN(GLOB.creature_selectable))
+					generate_selectable_creatures()
+				if(!(creature_species in GLOB.creature_selectable))
+					creature_species = initial(creature_species)
+				dat += "[icon2base64html(GLOB.creature_selectable_icons[creature_species])]<br>"
+			// End creature Character
 
 			dat += "</td>"
 			dat += APPEARANCE_CATEGORY_COLUMN
 
 			dat += "<h2>Voice</h2>"
+			dat += "<b>Custom Tongue:</b><br>"
+			dat += "</b><a style='display:block;width:100px' href='?_src_=prefs;preference=tongue;task=input'>[custom_tongue]</a><br>"
 
 			// Coyote ADD: Blurbleblurhs
 			dat += "<b>Voice Sound:</b></b><a style='display:block;width:100px' href='?_src_=prefs;preference=typing_indicator_sound;task=input'>[features_speech["typing_indicator_sound"]]</a><br>"
@@ -1211,7 +1251,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 						for(var/i in 1 to LAZYLEN(genitals_we_have))
 							dat += add_genital_layer_piece(genitals_we_have[i], i, LAZYLEN(genitals_we_have))
 					else
-						dat += "I dont seem to have any movable genitals!"
+						dat += "You dont seem to have any movable genitals!"
 					dat += "<tr>"
 					dat += "<td colspan='4' class='genital_name'>Hide Undies In Preview</td>"
 					/* var/genital_shirtlayer
@@ -1432,6 +1472,8 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			dat += "<b>tgui Style:</b> <a href='?_src_=prefs;preference=tgui_fancy'>[(tgui_fancy) ? "Fancy" : "No Frills"]</a><br>"
 			dat += "<b>Show Runechat Chat Bubbles:</b> <a href='?_src_=prefs;preference=chat_on_map'>[chat_on_map ? "Enabled" : "Disabled"]</a><br>"
 			dat += "<b>Runechat message char limit:</b> <a href='?_src_=prefs;preference=max_chat_length;task=input'>[max_chat_length]</a><br>"
+			dat += "<b>Runechat message width:</b> <a href='?_src_=prefs;preference=chat_width;task=input'>[chat_width]</a><br>"
+			dat += "<b>Runechat off-screen:</b> <a href='?_src_=prefs;preference=offscreen;task=input'>[see_fancy_offscreen_runechat ? "Enabled" : "Disabled"]</a><br>"
 			dat += "<b>See Runechat for non-mobs:</b> <a href='?_src_=prefs;preference=see_chat_non_mob'>[see_chat_non_mob ? "Enabled" : "Disabled"]</a><br>"
 			dat += "<b>See Runechat emotes:</b> <a href='?_src_=prefs;preference=see_rc_emotes'>[see_rc_emotes ? "Enabled" : "Disabled"]</a><br>"
 			dat += "<b>Use Runechat color in chat log:</b> <a href='?_src_=prefs;preference=color_chat_log'>[color_chat_log ? "Enabled" : "Disabled"]</a><br>"
@@ -1477,7 +1519,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			dat += "<h2>Preferences</h2>" //Because fuck me if preferences can't be fucking modularized and expected to update in a reasonable timeframe.
 			dat += "<b>End of round deathmatch:</b> <a href='?_src_=prefs;preference=end_of_round_deathmatch'>[end_of_round_deathmatch ? "Enabled" : "Disabled"]</a><br>"
 			dat += "<h2>Citadel Preferences</h2>" //Because fuck me if preferences can't be fucking modularized and expected to update in a reasonable timeframe.
-			// dat += "<b>Widescreen:</b> <a href='?_src_=prefs;preference=widescreenpref'>[widescreenpref ? "Enabled ([CONFIG_GET(string/default_view)])" : "Disabled (15x15)"]</a><br>"
+			dat += "<b>Widescreen:</b> <a href='?_src_=prefs;preference=widescreenpref'>[widescreenpref ? "Enabled ([CONFIG_GET(string/default_view)])" : "Disabled (15x15)"]</a><br>"
 			dat += "<b>Auto stand:</b> <a href='?_src_=prefs;preference=autostand'>[autostand ? "Enabled" : "Disabled"]</a><br>"
 			dat += "<b>Auto OOC:</b> <a href='?_src_=prefs;preference=auto_ooc'>[auto_ooc ? "Disabled" : "Enabled" ]</a><br>"
 			dat += "<b>Force Slot Storage HUD:</b> <a href='?_src_=prefs;preference=no_tetris_storage'>[no_tetris_storage ? "Enabled" : "Disabled"]</a><br>"
@@ -1488,6 +1530,8 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 
 			dat += "<b>Show Health Smileys:</b> <a href='?_src_=prefs;preference=show_health_smilies;task=input'>[show_health_smilies ? "Enabled" : "Disabled"]</a><br>"
 			dat += "<br>"
+			dat += "<b>Max PFP Examine Image Height:</b> <a href='?_src_=prefs;preference=max_pfp_hight;task=input'>[see_pfp_max_hight]</a><br>"
+			dat += "<b>Max PFP Examine Image Width:</b> <a href='?_src_=prefs;preference=max_pfp_with;task=input'>[see_pfp_max_widht]</a><br>"
 			dat += "</td>"
 			dat += "</tr></table>"
 			if(unlock_content)
@@ -1691,7 +1735,20 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			dat += "<h2>Adult content prefs</h2>"
 			dat += "<b>Arousal:</b><a href='?_src_=prefs;preference=arousable'>[arousable == TRUE ? "Enabled" : "Disabled"]</a><BR>"
 			dat += "<b>Genital examine text</b>:<a href='?_src_=prefs;preference=genital_examine'>[(cit_toggles & GENITAL_EXAMINE) ? "Enabled" : "Disabled"]</a><BR>"
+			dat += "<b>Hypno:</b> <a href='?_src_=prefs;preference=never_hypno'>[(cit_toggles & NEVER_HYPNO) ? "Disallowed" : "Allowed"]</a><br>"
 			dat += "<b>Ass Slapping:</b> <a href='?_src_=prefs;preference=ass_slap'>[(cit_toggles & NO_ASS_SLAP) ? "Disallowed" : "Allowed"]</a><br>"
+			dat += "<b>Automatic Wagging:</b> <a href='?_src_=prefs;preference=auto_wag'>[(cit_toggles & NO_AUTO_WAG) ? "Disabled" : "Enabled"]</a><br>"
+			dat += "<b>Forced Feminization:</b> <a href='?_src_=prefs;preference=feminization'>[(cit_toggles & FORCED_FEM) ? "Allowed" : "Disallowed"]</a><br>"
+			dat += "<b>Forced Masculinization:</b> <a href='?_src_=prefs;preference=masculinization'>[(cit_toggles & FORCED_MASC) ? "Allowed" : "Disallowed"]</a><br>"
+			dat += "<b>Lewd Hypno:</b> <a href='?_src_=prefs;preference=hypno'>[(cit_toggles & HYPNO) ? "Allowed" : "Disallowed"]</a><br>"
+			dat += "<b>Bimbofication:</b> <a href='?_src_=prefs;preference=bimbo'>[(cit_toggles & BIMBOFICATION) ? "Allowed" : "Disallowed"]</a><br>"
+			dat += "</td>"
+			dat +="<td width='300px' height='300px' valign='top'>"
+			dat += "<h2>Other content prefs</h2>"
+			dat += "<b>Breast Enlargement:</b> <a href='?_src_=prefs;preference=breast_enlargement'>[(cit_toggles & BREAST_ENLARGEMENT) ? "Allowed" : "Disallowed"]</a><br>"
+			dat += "<b>Penis Enlargement:</b> <a href='?_src_=prefs;preference=penis_enlargement'>[(cit_toggles & PENIS_ENLARGEMENT) ? "Allowed" : "Disallowed"]</a><br>"
+			dat += "<b>Butt Enlargement:</b> <a href='?_src_=prefs;preference=butt_enlargement'>[(cit_toggles & BUTT_ENLARGEMENT) ? "Allowed" : "Disallowed"]</a><br>"
+			dat += "<b>Belly Enlargement:</b> <a href='?_src_=prefs;preference=belly_enlargement'>[(cit_toggles & BELLY_ENLARGEMENT) ? "Allowed" : "Disallowed"]</a><br>"
 			dat += "<h2>Vore prefs</h2>"
 			dat += "<b>Master Vore Toggle:</b> <a href='?_src_=prefs;task=input;preference=master_vore_toggle'>[(master_vore_toggle) ? "Per Preferences" : "All Disabled"]</a><br>"
 			if(master_vore_toggle)
@@ -2417,22 +2474,23 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	var/total = special_s + special_p + special_e + special_c + special_i + special_a + special_l
 
 	dat += "<center><b>Allocate points</b></center>"
-	dat += "<center>Note: SPECIAL is purely cosmetic. These points have no effect on gameplay.</center><br>"
+	dat += "<center>Note: These attributes purely cosmetic. These points have no effect on mechanical gameplay and are for roleplaying with.</center><br>"
+	dat += "<center>You can roll them in game in the roleplaying tab.</center><br>"
 	dat += "<center>[total] out of 40 possible</center><br>"
-	dat += "<b>Strength	   :</b> <a href='?_src_=prefs;preference=special_s;task=input'>[special_s]</a><BR>"
-	dat += "<b>Perception  :</b> <a href='?_src_=prefs;preference=special_p;task=input'>[special_p]</a><BR>"
-	dat += "<b>Endurance   :</b> <a href='?_src_=prefs;preference=special_e;task=input'>[special_e]</a><BR>"
-	dat += "<b>Charisma    :</b> <a href='?_src_=prefs;preference=special_c;task=input'>[special_c]</a><BR>"
-	dat += "<b>Intelligence:</b> <a href='?_src_=prefs;preference=special_i;task=input'>[special_i]</a><BR>"
-	dat += "<b>Agility     :</b> <a href='?_src_=prefs;preference=special_a;task=input'>[special_a]</a><BR>"
-	dat += "<b>Luck        :</b> <a href='?_src_=prefs;preference=special_l;task=input'>[special_l]</a><BR>"
+	dat += "<b>Brawn	    :</b> <a href='?_src_=prefs;preference=special_s;task=input'>[special_s]</a><BR>"
+	dat += "<b>Awareness    :</b> <a href='?_src_=prefs;preference=special_p;task=input'>[special_p]</a><BR>"
+	dat += "<b>Toughness    :</b> <a href='?_src_=prefs;preference=special_e;task=input'>[special_e]</a><BR>"
+	dat += "<b>Moxy		    :</b> <a href='?_src_=prefs;preference=special_c;task=input'>[special_c]</a><BR>"
+	dat += "<b>Smarts		:</b> <a href='?_src_=prefs;preference=special_i;task=input'>[special_i]</a><BR>"
+	dat += "<b>Deftness		:</b> <a href='?_src_=prefs;preference=special_a;task=input'>[special_a]</a><BR>"
+	dat += "<b>Fate         :</b> <a href='?_src_=prefs;preference=special_l;task=input'>[special_l]</a><BR>"
 	if (total>40)
 		dat += "<center>Maximum exceeded, please change until your total is at or below 40<center>"
 	else
 		dat += "<center><a href='?_src_=prefs;preference=special;task=close'>Done</a></center>"
 
 	user << browse(null, "window=preferences")
-	var/datum/browser/popup = new(user, "mob_occupation", "<div align='center'>S.P.E.C.I.A.L</div>", 300, 400) //no reason not to reuse the occupation window, as it's cleaner that way
+	var/datum/browser/popup = new(user, "mob_occupation", "<div align='center'>Attributes</div>", 300, 400) //no reason not to reuse the occupation window, as it's cleaner that way
 	popup.set_window_options("can_close=0")
 	popup.set_content(dat.Join())
 	popup.open(0)
@@ -2591,10 +2649,10 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	// 				char_quirks -= quirk
 	// 			else
 	// 				if(value != 0 && (GetPositiveQuirkCount() >= MAX_QUIRKS))
-	// 					to_chat(user, span_warning("I can't have more than [MAX_QUIRKS] positive quirks!"))
+	// 					to_chat(user, span_warning("You can't have more than [MAX_QUIRKS] positive quirks!"))
 	// 					return
 	// 				if(balance - value < 0)
-	// 					to_chat(user, span_warning("I don't have enough balance to gain this quirk!"))
+	// 					to_chat(user, span_warning("You don't have enough balance to gain this quirk!"))
 	// 					return
 	// 				char_quirks += quirk
 	// 			SetQuirks(user)
@@ -2668,6 +2726,20 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			if(href_list["preference"] in GLOB.preferences_custom_names)
 				ask_for_custom_name(user,href_list["preference"])
 			switch(href_list["preference"])
+				if("max_pfp_hight")
+					var/newhight = input(user, "How many pixels tall should profile examine images be when you see em?", "tall") as num|null
+					if(newhight)
+						see_pfp_max_hight = newhight
+					else
+						to_chat("Okay!")
+					return 1
+				if("max_pfp_with")
+					var/newhight = input(user, "How many pixels wide should profile examine images be when you see em?", "wide") as num|null
+					if(newhight)
+						see_pfp_max_widht = newhight
+					else
+						to_chat("Okay!")
+					return 1
 				if("show_health_smilies")
 					TOGGLE_VAR(show_health_smilies)
 					return 1
@@ -2932,7 +3004,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 							if(modified_limbs[modified_limb][1] == LOADOUT_LIMB_PROSTHETIC && modified_limb != limb_type)
 								number_of_prosthetics += 1
 						if(number_of_prosthetics > MAXIMUM_LOADOUT_PROSTHETICS)
-							to_chat(user, span_danger("I can only have up to two prosthetic limbs!"))
+							to_chat(user, span_danger("You can only have up to two prosthetic limbs!"))
 						else
 							//save the actual prosthetic data
 							modified_limbs[limb_type] = list(modification_type, prosthetic_type)
@@ -3737,6 +3809,14 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 					if (!isnull(desiredlength))
 						max_chat_length = clamp(desiredlength, 1, CHAT_MESSAGE_MAX_LENGTH)
 
+				if ("chat_width")
+					var/desiredlength = input(user, "Choose the max character length of shown Runechat messages. Valid range is 1 to [CHAT_MESSAGE_MAX_LENGTH] (default: [initial(max_chat_length)]))", "Character Preference", max_chat_length)  as null|num
+					if (!isnull(desiredlength))
+						chat_width = clamp(desiredlength, 1, CHAT_MESSAGE_MAX_WIDTH)
+					
+				if("offscreen")
+					TOGGLE_VAR(see_hidden_runechat)
+
 				if("hud_toggle_color")
 					var/new_toggle_color = input(user, "Choose your HUD toggle flash color:", "Game Preference",hud_toggle_color) as color|null
 					if(new_toggle_color)
@@ -3769,7 +3849,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 						new_body_size = clamp(new_body_size * 0.01, min, max)
 						var/dorfy
 						if((new_body_size + 0.01) < danger) // Adding 0.01 as a dumb fix to prevent the warning message from appearing when exactly at threshold... Not sure why that happens in the first place.
-							dorfy = alert(user, "I have chosen a size below the slowdown threshold of [danger*100]%. For balancing purposes, the further you go below this percentage, the slower your character will be. Do you wish to keep this size?", "Speed Penalty Alert", "Yes", "Move it to the threshold", "No")
+							dorfy = alert(user, "You have chosen a size below the slowdown threshold of [danger*100]%. For balancing purposes, the further you go below this percentage, the slower your character will be. Do you wish to keep this size?", "Speed Penalty Alert", "Yes", "Move it to the threshold", "No")
 							if(dorfy == "Move it to the threshold")
 								new_body_size = danger
 							if(!dorfy) //Aborts if this var is somehow empty
@@ -3961,7 +4041,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 				if("has_belly")
 					features["has_belly"] = !features["has_belly"]
 				if("widescreenpref")
-					widescreenpref = TRUE
+					widescreenpref = !widescreenpref
 					user.client.change_view(CONFIG_GET(string/default_view))
 				if("end_of_round_deathmatch")
 					end_of_round_deathmatch = !end_of_round_deathmatch
@@ -4323,7 +4403,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			else if(toggle && !(has_loadout_gear(loadout_slot, "[G.type]")))
 				
 				if(!is_loadout_slot_available(G.category, G.cost))
-					to_chat(user, span_danger("I can only take [MAX_FREE_PER_CAT] free items from this category!"))
+					to_chat(user, span_danger("You can only take [MAX_FREE_PER_CAT] free items from this category!"))
 					return
 				
 				if(G.donoritem && !G.donator_ckey_check(user.ckey))
@@ -4533,13 +4613,13 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 				var/obj/item/bodypart/new_limb
 				switch(modified_limb)
 					if(BODY_ZONE_L_ARM)
-						new_limb = new/obj/item/bodypart/l_arm/robot/surplus(character)
+						new_limb = new/obj/item/bodypart/l_arm/robot/surplus_upgraded(character)
 					if(BODY_ZONE_R_ARM)
-						new_limb = new/obj/item/bodypart/r_arm/robot/surplus(character)
+						new_limb = new/obj/item/bodypart/r_arm/robot/surplus_upgraded(character)
 					if(BODY_ZONE_L_LEG)
-						new_limb = new/obj/item/bodypart/l_leg/robot/surplus(character)
+						new_limb = new/obj/item/bodypart/l_leg/robot/surplus_upgraded(character)
 					if(BODY_ZONE_R_LEG)
-						new_limb = new/obj/item/bodypart/r_leg/robot/surplus(character)
+						new_limb = new/obj/item/bodypart/r_leg/robot/surplus_upgraded(character)
 				var/prosthetic_type = modified_limbs[modified_limb][2]
 				if(prosthetic_type != "prosthetic") //lets just leave the old sprites as they are
 					new_limb.icon = wrap_file("icons/mob/augmentation/cosmetic_prosthetic/[prosthetic_type].dmi")
@@ -4604,7 +4684,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 
 //Resets the client's keybindings. Asks them for which
 /datum/preferences/proc/force_reset_keybindings()
-	var/choice = tgalert(parent.mob, "My basic keybindings need to be reset, emotes will remain as before. Would you prefer 'hotkey' or 'classic' mode?", "Reset keybindings", "Hotkey", "Classic")
+	var/choice = tgalert(parent.mob, "Your basic keybindings need to be reset, emotes will remain as before. Would you prefer 'hotkey' or 'classic' mode?", "Reset keybindings", "Hotkey", "Classic")
 	hotkeys = (choice != "Classic")
 	force_reset_keybindings_direct(hotkeys)
 
@@ -4802,14 +4882,14 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	lockdown = TRUE
 	/// stage one, ask if they are sure, and detail the fact that this will delete the character forever
 	/// with no chance of retrieval
-	var/stage1text = "I have clicked the button that will delete [real_name]. If you go through with this, [real_name] will \
+	var/stage1text = "You have clicked the button that will delete [real_name]. If you go through with this, [real_name] will \
 		be deleted, forever. There are no backups available, and no way to retrieve [real_name] once deleted. All of your \
 		flavor texts, quirks, and preferences associated with [real_name] will be lost, permanently and forever. The only things that will \
 		remain of [real_name] are things you have written down or screenshotted. Are you sure you want to delete [real_name]?"
 	var/choose = alert(usr, stage1text, "Character Deletion", "Yes, Delete This Character Forever", "NO WAIT I CHANGED MY MIND")
 	if(choose != "Yes, Delete This Character Forever")
 		lockdown = FALSE
-		to_chat(usr, span_green("My character remains safe and sound."))
+		to_chat(usr, span_green("Your character remains safe and sound."))
 		return
 	/// stage two, ask if they are really sure, and ask if they'd like to go back and save their flavor text or keep a screenshot of their prefs
 	/// a chance to back out, but also a chance to save some stuff
@@ -4821,7 +4901,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	var/choose2 = alert(usr, stage2text, "Character Deletion", "Yes, Delete This Character Forever", "NO WAIT I CHANGED MY MIND")
 	if(choose2 != "Yes, Delete This Character Forever")
 		lockdown = FALSE
-		to_chat(usr, span_green("My character remains safe and sound."))
+		to_chat(usr, span_green("Your character remains safe and sound."))
 		return
 	/// stage three, have them type in the name of the character to confirm they really want to delete it
 	var/confirmtext = "To confirm that you really want to delete [real_name], type in their name exactly as it appears in the text box below. \
@@ -4832,7 +4912,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	var/confirm = input(usr, confirmtext, "Character Deletion") as text|null
 	if(confirm != real_name)
 		lockdown = FALSE
-		to_chat(usr, span_green("My character remains safe and sound."))
+		to_chat(usr, span_green("Your character remains safe and sound."))
 		return
 	/// stage four, actually delete the character
 	log_game("[parent.ckey] has deleted [real_name] via the preferences menu. [real_name] is gone, forever. RIP.")
