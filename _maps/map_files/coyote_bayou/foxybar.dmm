@@ -1288,6 +1288,12 @@
 /obj/effect/turf_decal/siding/wood{
 	color = "#3B2B1A"
 	},
+/obj/item/clothing/head/christmashat,
+/obj/item/clothing/head/christmashat,
+/obj/item/clothing/head/christmashat,
+/obj/item/clothing/head/christmashatg,
+/obj/item/clothing/head/christmashatg,
+/obj/item/clothing/head/christmashatg,
 /turf/open/floor/carpet/royalblack,
 /area/f13/fb/bar)
 "fRv" = (
@@ -1502,6 +1508,12 @@
 	plane = -2;
 	alpha = 175
 	},
+/obj/item/reagent_containers/glass/beaker/large,
+/obj/item/reagent_containers/glass/beaker/large,
+/obj/item/reagent_containers/glass/beaker/large,
+/obj/item/reagent_containers/glass/beaker/large,
+/obj/item/reagent_containers/glass/beaker/large,
+/obj/item/reagent_containers/glass/beaker/large,
 /turf/open/floor/plasteel/f13/darkmarble,
 /area/f13/fb/bar)
 "gCH" = (
@@ -2507,6 +2519,7 @@
 	alpha = 175
 	},
 /obj/effect/sound_emitter/foxybar/ceilingfan,
+/obj/structure/flora/tree/pine/xmas,
 /turf/open/floor/plasteel/f13/whitemarble{
 	color = "#333333"
 	},
