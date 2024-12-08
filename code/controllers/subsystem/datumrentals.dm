@@ -160,6 +160,12 @@ SUBSYSTEM_DEF(rentaldatums)
 	var/langtreated
 	var/cant_language
 	var/is_thing
+	var/is_loud
+	var/is_muffled
+	var/dots_distance
+	var/dots_maxdistance
+	var/dots_some_anyway
+	var/dots_please
 
 /datum/rental_mommy/chat/copy_mommy(datum/rental_mommy/chat/mommy)
 	if(!..())
@@ -231,6 +237,12 @@ SUBSYSTEM_DEF(rentaldatums)
 	langtreated                        = mommy.langtreated
 	cant_language                      = mommy.cant_language
 	is_thing                           = mommy.is_thing
+	is_loud                            = mommy.is_loud
+	is_muffled                         = mommy.is_muffled
+	dots_distance                      = mommy.dots_distance
+	dots_maxdistance                   = mommy.dots_maxdistance
+	dots_some_anyway                   = mommy.dots_some_anyway
+	dots_please                        = mommy.dots_please
 
 /datum/rental_mommy/chat/wipe()
 	original_message                   = ""
@@ -300,6 +312,12 @@ SUBSYSTEM_DEF(rentaldatums)
 	langtreated                        = null
 	cant_language                      = null
 	is_thing                           = null
+	is_loud                            = null
+	is_muffled                         = null
+	dots_distance                      = null
+	dots_maxdistance                   = null
+	dots_some_anyway                   = null
+	dots_please                        = null
 
 // /// Know what, know what? screw it, I'm compiling all the chat procs into this datum
 // /datum/rental_mommy/chat/proc/handle_say(

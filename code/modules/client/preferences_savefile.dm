@@ -298,6 +298,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["see_pfp_max_widht"]		>> see_pfp_max_widht
 	S["show_this_many"]		>> show_this_many
 	S["names_per_row"]		>> names_per_row
+	S["hear_people_on_other_zs"]	>> hear_people_on_other_zs
 
 	S["lockouts"]	>> lockouts // my bans!
 	S["admin_wire_tap"]	>> admin_wire_tap // my bans!
@@ -368,8 +369,9 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	aghost_squelches        = sanitize_islist(aghost_squelches, list())
 	admin_wire_tap          = sanitize_integer(admin_wire_tap, TRUE)
 	see_furry_dating_sim    = sanitize_integer(see_furry_dating_sim, TRUE)
-	see_pfp_max_hight           = sanitize_integer(see_pfp_max_hight, 0, 5000, 300)
-	see_pfp_max_widht            = sanitize_integer(see_pfp_max_widht, 0, 100, 100)
+	hear_people_on_other_zs = sanitize_integer(hear_people_on_other_zs, FALSE, TRUE, initial(hear_people_on_other_zs))
+	see_pfp_max_hight       = sanitize_integer(see_pfp_max_hight, 0, 5000, 300)
+	see_pfp_max_widht       = sanitize_integer(see_pfp_max_widht, 0, 100, 100)
 
 	verify_keybindings_valid()		// one of these days this will runtime and you'll be glad that i put it in a different proc so no one gets their saves wiped
 
@@ -494,6 +496,11 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["admin_wire_tap"], admin_wire_tap)
 	var/jsout = safe_json_encode(quest_bank_editor_prefs)
 	WRITE_FILE(S["quest_bank_editor_prefs"], jsout)
+	WRITE_FILE(S["see_pfp_max_hight"], see_pfp_max_hight)
+	WRITE_FILE(S["see_pfp_max_widht"], see_pfp_max_widht)
+	WRITE_FILE(S["show_this_many"], show_this_many)
+	WRITE_FILE(S["names_per_row"], names_per_row)
+	WRITE_FILE(S["hear_people_on_other_zs"], hear_people_on_other_zs)
 
 /datum/preferences/proc/delete_character(slot, verification_name)
 	if(!path || !slot || !verification_name)

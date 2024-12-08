@@ -311,12 +311,15 @@ GLOBAL_LIST_EMPTY(chat_chuds)
 	var/list/visible_far = list()
 	var/list/hidden_pathable = list()
 	var/list/hidden_inaccessible = list()
+	var/list/on_another_z = list()
 	var/ready = TRUE
 
 /datum/chatchud/proc/putback()
 	visible_close.Cut()
 	visible_far.Cut()
 	hidden_pathable.Cut()
+	hidden_inaccessible.Cut()
+	on_another_z.Cut()
 	ready = TRUE // snip snip no jutsu wuz here
 
 /obj/effect/temp_visual/debug_heart
@@ -377,7 +380,7 @@ GLOBAL_LIST_EMPTY(chat_chuds)
 	var/close_range = momchat.close_message_range
 	var/long_range = momchat.far_message_range
 	var/cheapo = FALSE
-	if(!isplayer(source) && !istype(source, /mob/living/simple_animal/debug_chatterboy))
+	if(!isplayer(source) && !istype(source, /mob/living/carbon/human/debug_chatterboy))
 		long_range = min(long_range, 7)
 		close_range = min(close_range, 7) // raiders screamed so hard the server lagged
 		cheapo = TRUE
@@ -386,6 +389,8 @@ GLOBAL_LIST_EMPTY(chat_chuds)
 	var/private = A.private
 	var/datum/chatchud/CC = get_chatchud(source)
 	var/turf/source_turf = get_turf(source)
+	var/turf/upper_turf = SSmapping.get_turf_above(source_turf)
+	var/turf/lower_turf = SSmapping.get_turf_below(source_turf)
 	var/debug_i = 0
 	dingus:
 		for(var/client/C in GLOB.clients)
@@ -393,8 +398,24 @@ GLOBAL_LIST_EMPTY(chat_chuds)
 			if(isnewplayer(M))
 				continue dingus // quit talkin to ghosts, unless ur an admeme
 			var/turf/viewer_turf = get_turf(M)
-			if(source_turf.z != viewer_turf.z) // TODO: let people yell up stairs
-				continue dingus
+			var/turf/cool_source_turf = source_turf
+			var/on_another_z = FALSE
+			if(source_turf.z != viewer_turf.z) // TODO: let people yell up stairs // todone
+				if(!CHECK_PREFS(M, HEAR_PEOPLE_ON_OTHER_ZS))
+					continue dingus
+				if(momchat.is_quiet)
+					continue dingus
+				if(momchat.is_loud)
+					if(upper_turf && viewer_turf.z == upper_turf.z)
+						cool_source_turf = upper_turf
+						on_another_z = TRUE
+						CC.on_another_z[M] = upper_turf
+					else if(lower_turf && viewer_turf.z == lower_turf.z)
+						cool_source_turf = lower_turf
+						on_another_z = TRUE
+						CC.on_another_z[M] = lower_turf
+					else
+						continue dingus
 			var/am_widescreen = C.prefs.widescreenpref
 			var/westest 
 			if(am_widescreen)
@@ -429,21 +450,21 @@ GLOBAL_LIST_EMPTY(chat_chuds)
 				t_southwest.Beam(t_northwest, icon_state = "1-full", time = 3 SECONDS)
 			var/in_close_view
 			if(SSchat.debug_use_cool_los_proc)
-				in_close_view = isInSight(source_turf, viewer_turf)
+				in_close_view = isInSight(cool_source_turf, viewer_turf)
 			else
-				in_close_view = (source_turf in things_in_viewer_los)
-			var/in_rect = IS_IN_VIEWER_RECT(source_turf)
-			if(!in_rect && get_dist(source_turf, viewer_turf) > long_range)
+				in_close_view = (cool_source_turf in things_in_viewer_los)
+			var/in_rect = IS_IN_VIEWER_RECT(cool_source_turf)
+			if(!in_rect && get_dist(cool_source_turf, viewer_turf) > long_range)
 				continue dingus
 			// basic visibility, fulfills these conditions:
 			// 1. must be in the box of visibility, so we dont have to play with pathing nonsense
 			// 2. must be in the line of sight of the hearer, so it shouldnt be over darkness
 			// basically if they're on screen, and either of the ranges are met, they're visible and we can skip the pathing
-			if(in_rect && in_close_view)
-				if(get_dist(source_turf, viewer_turf) <= close_range)
+			if(in_rect && in_close_view && !on_another_z)
+				if(get_dist(cool_source_turf, viewer_turf) <= close_range)
 					CC.visible_close[M] = TRUE
 					continue dingus
-				// else if(get_dist(source_turf, viewer_turf) <= long_range)
+				// else if(get_dist(cool_source_turf, viewer_turf) <= long_range)
 				// 	CC.visible_far[M] = TRUE
 				// 	continue dingus
 			// if the source is in a Private area,
@@ -452,12 +473,12 @@ GLOBAL_LIST_EMPTY(chat_chuds)
 			if(private)
 				continue dingus
 			// if(in_rect && !quiet)
-			// 	CC.hidden_pathable[M] = source_turf // close enough
+			// 	CC.hidden_pathable[M] = cool_source_turf // close enough
 			// 	continue dingus
 			// now the fun begins. Try to find a path to them
 			var/list/soundwalk = cheapo\
-				? getline(source_turf, viewer_turf)\
-				: get_path_to(source_turf, viewer_turf, long_range, use_visibility = TRUE) // yes i'm using expensive pathfinding for horny moaning, I'm an expensive date
+				? getline(cool_source_turf, viewer_turf)\
+				: get_path_to(cool_source_turf, viewer_turf, long_range, use_visibility = TRUE) // yes i'm using expensive pathfinding for horny moaning, I'm an expensive date
 			// they're closed off, no path to them, but they're still within long range
 			if(!islist(soundwalk))
 				CC.hidden_inaccessible[M] = TRUE // mark them as hidden
@@ -469,7 +490,7 @@ GLOBAL_LIST_EMPTY(chat_chuds)
 			// 1. must be in the box of visibility
 			// 2. must be in the line of sight of the hearer
 			debug_i = 0
-			var/list/ccline = getline(source_turf, viewer_turf) // know that cool pathfinding stuff? throw it out, just needed it for seeing if we can reach em!
+			var/list/ccline = getline(cool_source_turf, viewer_turf) // know that cool pathfinding stuff? throw it out, just needed it for seeing if we can reach em!
 			var/cole = SSchat.debug_chud && safepick("#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF")
 			for(var/turf/T as anything in ccline) // for each step we take...
 				if(SSchat.debug_chud)

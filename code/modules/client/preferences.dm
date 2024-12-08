@@ -484,6 +484,8 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	var/show_this_many = 30
 	var/names_per_row = 6
 
+	var/hear_people_on_other_zs = TRUE
+
 /datum/preferences/New(client/C)
 	parent = C
 
@@ -1463,6 +1465,8 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			dat += "<b>See Runechat for non-mobs:</b> <a href='?_src_=prefs;preference=see_chat_non_mob'>[see_chat_non_mob ? "Enabled" : "Disabled"]</a><br>"
 			dat += "<b>See Runechat emotes:</b> <a href='?_src_=prefs;preference=see_rc_emotes'>[see_rc_emotes ? "Enabled" : "Disabled"]</a><br>"
 			dat += "<b>Use Runechat color in chat log:</b> <a href='?_src_=prefs;preference=color_chat_log'>[color_chat_log ? "Enabled" : "Disabled"]</a><br>"
+			dat += "<br>"
+			dat += "<b>See Runechat / hear sounds above/below you:</b> <a href='?_src_=prefs;preference=upperlowerfloor;task=input'>[hear_people_on_other_zs ? "Enabled" : "Disabled"]</a><br>"
 			dat += "<br>"
 			dat += "<b>Action Buttons:</b> <a href='?_src_=prefs;preference=action_buttons'>[(buttons_locked) ? "Locked In Place" : "Unlocked"]</a><br>"
 			dat += "<br>"

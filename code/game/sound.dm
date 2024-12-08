@@ -1,3 +1,4 @@
+GLOBAL_LIST_EMPTY(sound_relays)
 /proc/playsound(
 		atom/source,
 		soundin,
@@ -14,81 +15,124 @@
 		distant_sound,
 		distant_range,
 		soundpref_index)
-	if(isarea(source))
-		CRASH("playsound(): source is an area")
 
-	var/turf/turf_source = get_turf(source)
+	spawn(-1) //ya know if you turn those cameras around, you can sleep and spacemanDMM will never know!
+		if(isarea(source))
+			CRASH("playsound(): source is an area")
 
-	if (!turf_source)
-		return
+		var/turf/turf_source = get_turf(source)
 
-	//allocate a channel if necessary now so its the same for everyone
-	channel = channel || SSsounds.random_available_channel()
+		if (!turf_source)
+			return
 
-	// Looping through the player list has the added bonus of working for mobs inside containers
-	var/sound/S = sound(get_sfx(soundin))
-	var/sound/S_distant = distant_sound ? sound(get_sfx(distant_sound)) : null
-	var/maxdistance = SOUND_RANGE + extrarange
-	var/source_z = turf_source.z
-	var/list/listeners = SSmobs.clients_by_zlevel[source_z].Copy()
+		//allocate a channel if necessary now so its the same for everyone
+		channel = channel || SSsounds.random_available_channel()
 
-	var/turf/above_turf = SSmapping.get_turf_above(turf_source)
-	var/turf/below_turf = SSmapping.get_turf_below(turf_source)
+		// Looping through the player list has the added bonus of working for mobs inside containers
+		var/sound/S = sound(get_sfx(soundin))
+		var/sound/S_distant = distant_sound ? sound(get_sfx(distant_sound)) : null
+		var/maxdistance = SOUND_RANGE + extrarange
+		var/source_z = turf_source.z
+		var/list/listeners = list()
+		var/list/our_relays = list()
 
-	// if(!ignore_walls) //these sounds don't carry through walls
-	// 	listeners = listeners & (hearers(maxdistance,turf_source) | viewers(maxdistance,turf_source))
+		var/list/zs_to_check = list(source_z)
+		var/turf/above_turf = SSmapping.get_turf_above(turf_source)
+		if(above_turf)
+			zs_to_check += above_turf.z
+		var/turf/below_turf = SSmapping.get_turf_below(turf_source)
+		if(below_turf)
+			zs_to_check += below_turf.z
+		for(var/client/C in GLOB.clients)
+			if(!C.mob || !(C.mob.z in zs_to_check))
+				continue
+			var/mob/sound_relay/sr = LAZYACCESS(GLOB.sound_relays, C.ckey)
+			if(!sr)
+				sr = new /mob/sound_relay()
+				sr.relay_ckey = C.ckey
+				GLOB.sound_relays[C.ckey] = sr
+			sr.Snap()
+			our_relays += sr
 
-	// 	if(above_turf && istransparentturf(above_turf))
-	// 		listeners += (hearers(maxdistance,above_turf) | viewers(maxdistance,turf_source))
+		// if(!ignore_walls) //these sounds don't carry through walls
+		// 	listeners = listeners & (hearers(maxdistance,turf_source) | viewers(maxdistance,turf_source))
 
-	// 	if(below_turf && istransparentturf(turf_source))
-	// 		listeners += (hearers(maxdistance,below_turf) | viewers(maxdistance,turf_source))
+		// 	if(above_turf && istransparentturf(above_turf))
+		// 		listeners += (hearers(maxdistance,above_turf) | viewers(maxdistance,turf_source))
 
-	// else
-	if(above_turf && istransparentturf(above_turf))
-		listeners += SSmobs.clients_by_zlevel[above_turf.z]
+		// 	if(below_turf && istransparentturf(turf_source))
+		// 		listeners += (hearers(maxdistance,below_turf) | viewers(maxdistance,turf_source))
 
-	if(below_turf && istransparentturf(turf_source))
-		listeners += SSmobs.clients_by_zlevel[below_turf.z]
+		// else
+		// if(above_turf && istransparentturf(above_turf))
+		// 	listeners += SSmobs.clients_by_zlevel[above_turf.z]
 
-	for(var/mob/listening_mob as anything in listeners + SSmobs.dead_players_by_zlevel[source_z])
-		if(soundpref_index && !CHECK_PREFS(listening_mob, soundpref_index))
-			continue
-		var/listener_distance = get_dist(listening_mob, turf_source)
-		if(listener_distance <= maxdistance)
-			listening_mob.playsound_local(
-				turf_source, 
-				soundin, 
-				vol, 
-				vary, 
-				frequency, 
-				falloff_exponent, 
-				channel, 
-				pressure_affected, 
-				S, 
-				maxdistance, 
-				falloff_distance, 
-				1, 
-				use_reverb)
-		if(distant_sound && distant_range && ignore_walls && listener_distance >= (maxdistance * SOUND_NORMAL_TO_DISTANT_COEFF) && listener_distance <= distant_range)
-			listening_mob.playsound_local(
-				turf_source, 
-				distant_sound, 
-				vol, 
-				vary, 
-				frequency, 
-				falloff_exponent, 
-				channel, 
-				pressure_affected, 
-				S_distant, 
-				distant_range, 
-				maxdistance, 
-				1, 
-				use_reverb)
-/* 	for(var/mob/listening_mob as anything in SSmobs.dead_players_by_zlevel[source_z])
-		if(get_dist(listening_mob, turf_source) <= maxdistance)
-			listening_mob.playsound_local(turf_source, soundin, vol, vary, frequency, falloff_exponent, channel, pressure_affected, S, maxdistance, falloff_distance, 1, use_reverb) */
+		// if(below_turf && istransparentturf(turf_source))
+		// 	listeners += SSmobs.clients_by_zlevel[below_turf.z]
 
+		///NOW to check if these silly mobs can path to the sound source
+		for(var/mob/sound_relay/sr in our_relays)
+			var/turf/which
+			var/mob/litner = sr.Getmob()
+			if(sr.z == source_z)
+				which = turf_source
+			else if(!CHECK_PREFS(litner, HEAR_PEOPLE_ON_OTHER_ZS))
+				continue
+			else if(above_turf && sr.z == above_turf.z)
+				which = above_turf
+			else if(below_turf && sr.z == below_turf.z)
+				which = below_turf
+			else
+				continue
+			if(get_dist(sr, which) > maxdistance)
+				continue
+			if(get_dist(sr, which) <= 2 && sr.z == source_z)
+				listeners += litner
+			else
+				var/list/expensive_pathing = get_path_to(which, get_turf(sr), maxdistance, use_visibility = TRUE)
+				if(islist(expensive_pathing))
+					listeners += litner
+
+		for(var/mob/listening_mob as anything in listeners + SSmobs.dead_players_by_zlevel[source_z])
+			if(soundpref_index && !CHECK_PREFS(listening_mob, soundpref_index))
+				continue
+			var/listener_distance = get_dist(listening_mob, turf_source)
+			var/volumez = vol
+			if(listening_mob.z != source_z)
+				volumez /= 4
+			if(listener_distance <= maxdistance)
+				listening_mob.playsound_local(
+					turf_source, 
+					soundin, 
+					volumez, 
+					vary, 
+					frequency, 
+					falloff_exponent, 
+					channel, 
+					pressure_affected, 
+					S, 
+					maxdistance, 
+					falloff_distance, 
+					1, 
+					use_reverb)
+			if(distant_sound && distant_range && ignore_walls && listener_distance >= (maxdistance * SOUND_NORMAL_TO_DISTANT_COEFF) && listener_distance <= distant_range)
+				listening_mob.playsound_local(
+					turf_source, 
+					distant_sound, 
+					volumez, 
+					vary, 
+					frequency, 
+					falloff_exponent, 
+					channel, 
+					pressure_affected, 
+					S_distant, 
+					distant_range, 
+					maxdistance, 
+					1, 
+					use_reverb)
+	/* 	for(var/mob/listening_mob as anything in SSmobs.dead_players_by_zlevel[source_z])
+			if(get_dist(listening_mob, turf_source) <= maxdistance)
+				listening_mob.playsound_local(turf_source, soundin, vol, vary, frequency, falloff_exponent, channel, pressure_affected, S, maxdistance, falloff_distance, 1, use_reverb) */
 
 /mob/proc/playsound_local(
 		turf/turf_source, 
@@ -130,6 +174,8 @@
 
 		//sound volume falloff with distance
 		var/distance = get_dist(T, turf_source)
+		if(T.z != turf_source.z)
+			distance *= 2
 
 		distance *= distance_multiplier
 
@@ -184,6 +230,30 @@
 			S.echo[4] = 0 //RoomHF setting, 0 means normal reverb.
 
 	SEND_SOUND(src, S)
+
+/mob/sound_relay
+	name = "Sound Relay the Hedgehog"
+	desc = "Gotta relay sounds!"
+	invisibility = INVISIBILITY_ABSTRACT
+	density = FALSE
+	see_in_dark = 1e6
+	move_resist = INFINITY
+	var/relay_ckey = null
+
+/mob/sound_relay/Initialize() //Properly prevents this mob from gaining huds or joining any global lists
+	SHOULD_CALL_PARENT(FALSE)
+	if(flags_1 & INITIALIZED_1)
+		stack_trace("Warning: [src]([type]) initialized multiple times!")
+	flags_1 |= INITIALIZED_1
+	return INITIALIZE_HINT_NORMAL
+
+/mob/sound_relay/proc/Snap()
+	var/mob/M = extract_mob(relay_ckey)
+	if(M)
+		loc = get_turf(M)
+
+/mob/sound_relay/proc/Getmob()
+	return extract_mob(relay_ckey)
 
 /proc/sound_to_playing_players(soundin, volume = 100, vary = FALSE, frequency = 0, falloff = FALSE, channel = 0, pressure_affected = FALSE, sound/S)
 	if(!S)

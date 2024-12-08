@@ -276,6 +276,14 @@ SUBSYSTEM_DEF(prefbreak) // ALL ABOARD THE S.S. PREFBREAK OFF TO **** YOUR *****
 	return CHECK_BITFIELD(consumer.chat_toggles, CHAT_SEE_COOLCHAT) // kinda vital here
 	// return consumer.see_fancy_offscreen_runechat // kinda vital here
 
+/datum/prefcheck/hear_people_on_other_zs
+	index = HEAR_PEOPLE_ON_OTHER_ZS
+
+/datum/prefcheck/hear_people_on_other_zs/allowed(datum/preferences/consumer)
+	PREFBROKEN
+	return consumer.hear_people_on_other_zs // kinda vital here
+	// return consumer.see_fancy_offscreen_runechat // kinda vital here
+
 ///////////////////////////////////////////////////////////////////////////////////
 /datum/prefcheck/stash_equipment_on_logout
 	index = DUMP_STUFF_ON_LOGOUT

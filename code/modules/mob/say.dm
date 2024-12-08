@@ -262,3 +262,12 @@
 		if(trim_this_many)
 			momchat.message = copytext(momchat.message, trim_this_many+1)
 		momchat.mode_trimmed = TRUE
+
+/mob/proc/get_volume(datum/rental_mommy/chat/momchat)
+	if(!istype(momchat))
+		return 0
+	switch(momchat.message_mode)
+		if(MODE_YELL, MODE_EXCLAIM, MODE_SING)
+			momchat.is_loud = TRUE
+		if(MODE_WHISPER, MODE_HEADSET, MODE_CUSTOM_SAY)
+			momchat.is_quiet = TRUE

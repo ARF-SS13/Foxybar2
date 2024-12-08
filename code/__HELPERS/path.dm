@@ -31,8 +31,8 @@
 	qdel(pathfind_datum)
 
 	SSpathfinder.mobs.found(l)
-	if(!path)
-		path = list()
+	// if(!path)
+	// 	path = list()
 	return path
 
 /**

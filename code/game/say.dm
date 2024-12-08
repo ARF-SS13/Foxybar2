@@ -112,7 +112,7 @@ Dan's even bigger Say() rewrite.
 		momchat.original_speakername = namepart
 	//End name span.
 	var/endspanpart = "</span>"
-	
+
 	//Message
 	var/messagepart = " <span class='message'>[lang_treat(speaker, message_language, raw_message, spans, message_mode, null, momchat)]</span></span>"
 
@@ -224,6 +224,11 @@ Dan's even bigger Say() rewrite.
 	no_quote = FALSE,
 	datum/rental_mommy/chat/momchat,
 )
+
+	if(momchat?.dots_please)
+		raw_message = dots(raw_message, null, momchat.dots_distance, momchat.dots_maxdistance, momchat.dots_some_anyway)
+		momchat.dots_please = FALSE
+
 	var/atom/movable/AM = speaker.GetSource() || speaker || src
 	if(has_language(language))
 		if(momchat?.langtreated)

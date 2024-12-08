@@ -75,6 +75,7 @@
 	var/datum/saymode/saymode = SSradio.saymodes[talk_key]
 	SSchat.ExtractCustomVerb(momchat)
 	get_message_mode(momchat)
+	get_volume(momchat)
 	momchat.original_message = momchat.message
 	var/in_critical = InCritical()
 	momchat.in_critical = in_critical
@@ -267,8 +268,6 @@
 		deaf_type = 2 // Since you should be able to hear yourself without looking
 	
 
-	if(only_overhead)
-		return
 	// Recompose message for AI hrefs, language incomprehension.
 	if(momchat?.cant_language)
 		var/msg = momchat ? momchat.original_message : raw_message
@@ -302,6 +301,8 @@
 				create_chat_message(speaker, message_language, message, spans, NONE, cooldata)
 			else
 				create_chat_message(speaker, message_language, message, spans, NONE, data)
+	if(only_overhead)
+		return
 	var/client/C = client
 	if(C.prefs.color_chat_log)
 		var/base_chat_color = speaker.get_chat_color()
@@ -332,6 +333,7 @@
 	var/list/visible_close = CC ? CC.visible_close.Copy() : list(momchat.direct_to_mob)
 	var/list/visible_far = CC ? CC.visible_far.Copy() : list()
 	var/list/hidden_pathable = CC ? CC.hidden_pathable.Copy() : list()
+	var/list/on_another_z = CC ? CC.on_another_z.Copy() : list()
 	CC?.putback()
 
 	// var/list/the_dead = list()
@@ -366,9 +368,15 @@
 	for(var/mob/mvc in visible_close)
 		var/datum/rental_mommy/chat/mom2 = SSrentaldatums.CheckoutChatMommy()
 		mom2.copy_mommy(momchat)
-		mom2.runechat_mode = "visible_close"
+		if(LAZYACCESS(on_another_z, mvc))
+			mom2.runechat_mode = "hidden_pathable"
+			mom2.only_overhead = TRUE
+			mom2.display_turf = LAZYACCESS(on_another_z, mvc)
+			mom2.is_eavesdropping = TRUE
+		else
+			mom2.runechat_mode = "visible_close"
 		mom2.recipiant = mvc
-		mvc.Hear(rendered, src, momchat.language, momchat.message, null, mom2.spans, momchat.message_mode, momchat.source, momchat.only_overhead, list("momchat" = mom2))
+		mvc.Hear(rendered, src, momchat.language, momchat.message, null, mom2.spans, momchat.message_mode, momchat.source, momchat.only_overhead || mom2.only_overhead, list("momchat" = mom2))
 		sblistening |= mvc.client
 		if(!mom2.available)
 			mom2.checkin()
@@ -388,13 +396,24 @@
 		mom3.is_eavesdropping = TRUE
 		mom3.display_turf = hearfrom
 		mom3.recipiant = mhp
-		var/msg_dotted = dots(mom3.message, distance = get_dist(get_turf(src), get_turf(mhp)), maxdistance = momchat.far_message_range)
-		var/msg_rerendered = compose_message(src, mom3.language, msg_dotted, null, momchat.spans | mom3.spans, momchat.message_mode, FALSE, momchat.source, list("momchat" = mom3))
+		var/distan = get_dist(get_turf(src), get_turf(mhp))
+		if(LAZYACCESS(on_another_z, mhp))
+			mom3.display_turf = LAZYACCESS(on_another_z, mhp)
+			mom3.only_overhead = TRUE
+			mom3.is_muffled = TRUE
+			distan += 2
+			distan *= 1.2
+		mom3.dots_distance = distan
+		mom3.dots_maxdistance = momchat.far_message_range
+		mom3.dots_some_anyway = TRUE
+		mom3.dots_please = TRUE
+		// var/msg_dotted = dots(mom3.message, distance = get_dist(get_turf(src), distan), maxdistance = momchat.far_message_range, some_anyway = TRUE)
+		var/msg_rerendered = compose_message(src, mom3.language, mom3.original_message, null, momchat.spans | mom3.spans, momchat.message_mode, FALSE, momchat.source, list("momchat" = mom3))
 		/// and cus the spans dont get frindly right, here it s again
 		msg_rerendered = span_small(msg_rerendered)
 		mom3.message = msg_rerendered
 		mom3.runechat_mode = "hidden_pathable"
-		mhp.Hear(msg_rerendered, src, momchat.language, msg_rerendered, null, momchat.spans | mom3.spans, momchat.message_mode, momchat.source, momchat.only_overhead, list("momchat" = mom3))
+		mhp.Hear(msg_rerendered, src, momchat.language, msg_rerendered, null, momchat.spans | mom3.spans, momchat.message_mode, momchat.source, momchat.only_overhead || mom3.only_overhead, list("momchat" = mom3))
 		sblistening |= mhp.client
 		if(!mom3.available)
 			mom3.checkin()
@@ -424,16 +443,17 @@
 	I.appearance_flags = APPEARANCE_UI_IGNORE_ALPHA
 	INVOKE_ASYNC(GLOBAL_PROC, GLOBAL_PROC_REF(flick_overlay), I, speech_bubble_recipients, 30)
 
-/mob/living/simple_animal/debug_chatterboy
+/mob/living/carbon/human/debug_chatterboy
 	name = "Chatterboy"
 	desc = "A debug chatterboy. He's here to help you debug your chatterboys. He's not actually a chatterboy, though. He's just a rock."
 	icon = 'modular_coyote/icons/objects/c13ammo.dmi'
 	icon_state = "rock"
 	maxHealth = 1
-	wander = FALSE
+	// wander = FALSE
 	var/speak_cooldown = 0
+	var/screamo = FALSE
 
-/mob/living/simple_animal/debug_chatterboy/BiologicalLife(seconds, times_fired)
+/mob/living/carbon/human/debug_chatterboy/BiologicalLife(seconds, times_fired)
 	. = ..()
 	// if(speak_cooldown > world.time)
 	// 	return
@@ -454,14 +474,23 @@
 		"SCREW OFF, CORRY YOU WANNA BE CHATTERBOY",
 		"I stuff all the cheeseburgers in my mouth and swallow them whole.",
 	)
-	playsound(src, 'sound/effects/bwoing.ogg', 100, TRUE)
-	say(speech)
+	if(screamo)
+		emote("scream")
+		say("[speech]!!!!!")
+	else
+		playsound(src, 'sound/effects/bwoing.ogg', 100, TRUE)
+		say(speech)
 
-/mob/living/simple_animal/debug_chatterboy/radiolad
+/mob/living/carbon/human/debug_chatterboy/radiolad
 	name = "Chatterboy w/ radio"
 	desc = "A debug chatterboy w a radoi. He's here to help you debug your chatterboys. He's not actually a chatterboy, though. He's just a rock."
 
-/mob/living/simple_animal/debug_chatterboy/radiolad/Initialize()
+/mob/living/carbon/human/debug_chatterboy/screamo
+	name = "Chatterboy who screams"
+	desc = "A debug chatterboy w a screaming want to scream a lot e swtont stop screaming."
+	screamo = TRUE
+
+/mob/living/carbon/human/debug_chatterboy/radiolad/Initialize()
 	var/obj/item/radio/R = new(get_turf(src))
 	R.broadcasting = TRUE
 	R.listening = TRUE

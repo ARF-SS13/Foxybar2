@@ -37,6 +37,7 @@ GLOBAL_LIST_INIT(verbal_punch_lasers, list(null,null,null,null,null,null,null,nu
 	var/turf/alt_display
 	var/stick_on_turf
 	var/is_thing
+	var/muffled
 
 /**
  * Constructs a chat message overlay
@@ -72,6 +73,8 @@ GLOBAL_LIST_INIT(verbal_punch_lasers, list(null,null,null,null,null,null,null,nu
 					target = target.loc
 			if(mommy.runechat_mode == "hidden_pathable")
 				stick_on_turf = TRUE
+			if(mommy.is_muffled)
+				muffled = TRUE
 		else
 			alt_display = data["display_turf"] || null
 			if((get_dist(owner, (alt_display || target)) > 6 || data["is_far"])) // SD screens are 7 radius, but the UI covers a bit of that
@@ -237,10 +240,15 @@ GLOBAL_LIST_INIT(verbal_punch_lasers, list(null,null,null,null,null,null,null,nu
 	var/alphatomakeit = 255
 	if(eavesdrop)
 		alphatomakeit /= 2
+		message.transform = message.transform.Scale(0.75)
 	if(offscreen)
 		alphatomakeit /= 1.5
 		message.pixel_x = rand(-40, 40)
 		message.pixel_y = rand(-40, 40)
+		message.transform = message.transform.Scale(0.75)
+	if(muffled)
+		alphatomakeit /= 4
+		message.transform = message.transform.Scale(0.75)
 	// if((SPAN_SMALL in extra_classes) || (SPAN_SMALLER in extra_classes))
 	// 	alphatomakeit /= 2
 
@@ -303,7 +311,7 @@ GLOBAL_LIST_INIT(verbal_punch_lasers, list(null,null,null,null,null,null,null,nu
 	if(runechat_flags & EMOTE_MESSAGE)
 		new /datum/chatmessage(raw_message, speaker, src, list("emote", "italics"), null, data, mommy)
 	else
-		new /datum/chatmessage(lang_treat(speaker, message_language, raw_message, spans, null, TRUE), speaker, src, spans, null, data, mommy)
+		new /datum/chatmessage(lang_treat(speaker, message_language, raw_message, spans, null, TRUE, mommy), speaker, src, spans, null, data, mommy)
 
 
 // Tweak these defines to change the available color ranges
