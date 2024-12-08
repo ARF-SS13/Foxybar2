@@ -10,8 +10,8 @@
 /obj/structure/bed
 	name = "bed"
 	desc = "This is used to lie in, sleep in or strap on."
-	icon_state = "shitbed"
-	icon = 'modular_roguetown/misc/structure.dmi'
+	icon_state = "betterbed"
+	icon = 'modular_splurt/icons/obj/structures/beds.dmi'
 	anchored = TRUE
 	can_buckle = TRUE
 	buckle_lying = TRUE
@@ -61,8 +61,8 @@
 
 /obj/structure/bed/double
 	name = "double bed"
-	icon_state = "double"
-	var/base_icon = "double"
+	icon_state = "doublebed"
+	var/base_icon = "doublebed"
 
 /obj/structure/bed/double/post_buckle_mob(mob/living/M as mob)
 	if(M.buckled == src)
