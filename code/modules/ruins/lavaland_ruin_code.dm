@@ -16,7 +16,7 @@
 
 //lavaland_surface_seed_vault.dmm
 //Seed Vault
-
+/*
 /obj/effect/spawner/lootdrop/seed_vault
 	name = "seed vault seeds"
 	lootcount = 1
@@ -26,7 +26,7 @@
 				/obj/item/seeds/berry/glow = 10,
 				/obj/item/seeds/sunflower/moonflower = 8
 				)
-
+*/
 /obj/item/disk/design_disk/plant_disk
 	name = "Plant Disk Blueprints"
 	desc = "A disk to be uploaded into the autolathen for more plant disks."

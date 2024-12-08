@@ -61,7 +61,6 @@
 	reagents_add = list(
 		/datum/reagent/consumable/nutriment = 0.02,
 		/datum/reagent/hydrogen = 0.05,
-		/datum/reagent/drug/space_drugs = 0.15
 	)
 
 /obj/item/reagent_containers/food/snacks/grown/grass/fairy

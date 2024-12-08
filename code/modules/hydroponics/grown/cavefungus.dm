@@ -50,10 +50,7 @@
 	icon_harvest = "glow-harvest"
 	genes = list(/datum/plant_gene/trait/repeated_harvest, /datum/plant_gene/trait/glow)
 	reagents_add = list(
-		/datum/reagent/drug/space_drugs = 0.04,
-		/datum/reagent/toxin/mindbreaker = 0.1,
-		/datum/reagent/toxin/mutagen = 0.01, 
-		/datum/reagent/radium = 0.05
+		/datum/reagent/medicine/charcoal = 0.05
 	)
 
 /obj/item/reagent_containers/food/snacks/grown/glow

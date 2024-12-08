@@ -812,7 +812,8 @@
 /obj/item/storage/box/large/custom_kit/aphass/PopulateContents()
 	new /obj/item/slimecross/charged/green(src)
 	new /obj/item/reagent_containers/syringe(src)
-	new /obj/item/stack/sheet/mineral/plasma(src)
+	new /obj/item/stack/sheet/mineral/plasma(src) 
+	new /obj/item/slime_extract/silver(src)
 
 /datum/gear/donator/kits/palpapus
 	name = "Darth Plapappus Customs"

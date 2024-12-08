@@ -554,7 +554,7 @@
 		/obj/item/grown/rose,
 		/obj/item/grown/carbon_rose,
 		/obj/item/reagent_containers/food/snacks/grown/holymelon,
-		/obj/item/reagent_containers/food/snacks/grown/cherry_bomb,
+//		/obj/item/reagent_containers/food/snacks/grown/cherry_bomb,
 		/obj/item/reagent_containers/food/snacks/grown/mushroom/angel,
 		/obj/item/reagent_containers/food/snacks/grown/mushroom/walkingmushroom,
 		/obj/item/reagent_containers/food/snacks/grown/mushroom/jupitercup,

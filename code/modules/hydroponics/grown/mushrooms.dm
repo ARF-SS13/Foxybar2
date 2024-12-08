@@ -23,7 +23,6 @@
 	genes = list(/datum/plant_gene/trait/plant_type/fungal_metabolism)
 	growing_icon = 'icons/obj/hydroponics/growing_mushrooms.dmi'
 	reagents_add = list(
-		/datum/reagent/medicine/morphine = 0.35,
 		/datum/reagent/medicine/charcoal = 0.35,
 		/datum/reagent/consumable/nutriment = 0
 	)
@@ -54,9 +53,7 @@
 	growing_icon = 'icons/obj/hydroponics/growing_mushrooms.dmi'
 	mutatelist = list(/obj/item/seeds/angel)
 	reagents_add = list(
-		/datum/reagent/drug/mushroomhallucinogen = 0.04,
-		/datum/reagent/toxin/amatoxin = 0.35,
-		/datum/reagent/consumable/nutriment = 0
+		/datum/reagent/consumable/nutriment = 0.1
 	)
 
 /obj/item/reagent_containers/food/snacks/grown/mushroom/amanita
@@ -84,10 +81,7 @@
 	genes = list(/datum/plant_gene/trait/plant_type/fungal_metabolism)
 	growing_icon = 'icons/obj/hydroponics/growing_mushrooms.dmi'
 	reagents_add = list(
-		/datum/reagent/drug/mushroomhallucinogen = 0.04,
-		/datum/reagent/toxin/amatoxin = 0.1,
-		/datum/reagent/consumable/nutriment = 0,
-		/datum/reagent/toxin/amanitin = 0.2
+		/datum/reagent/consumable/nutriment = 0.1
 	)
 	rarity = 30
 
@@ -115,7 +109,6 @@
 	genes = list(/datum/plant_gene/trait/plant_type/fungal_metabolism)
 	growing_icon = 'icons/obj/hydroponics/growing_mushrooms.dmi'
 	reagents_add = list(
-		/datum/reagent/drug/mushroomhallucinogen = 0.25,
 		/datum/reagent/consumable/nutriment = 0.02
 	)
 
@@ -281,8 +274,6 @@
 		/obj/item/seeds/glowshroom/shadowshroom
 	)
 	reagents_add = list(
-		/datum/reagent/radium = 0.1,
-		/datum/reagent/phosphorus = 0.1,
 		/datum/reagent/consumable/nutriment = 0.04
 	)
 
@@ -330,7 +321,6 @@
 	genes = list(/datum/plant_gene/trait/glow/red, /datum/plant_gene/trait/cell_charge, /datum/plant_gene/trait/plant_type/fungal_metabolism)
 	mutatelist = list()
 	reagents_add = list(
-		/datum/reagent/teslium = 0.1,
 		/datum/reagent/consumable/nutriment = 0.04
 	)
 	rarity = 30
@@ -358,7 +348,6 @@
 	genes = list(/datum/plant_gene/trait/glow/shadow, /datum/plant_gene/trait/plant_type/fungal_metabolism)
 	mutatelist = list()
 	reagents_add = list(
-		/datum/reagent/radium = 0.2,
 		/datum/reagent/consumable/nutriment = 0.04
 	)
 	rarity = 30
@@ -414,7 +403,6 @@
 	list_reagents = list(
 		/datum/reagent/consumable/nutriment/vitamin = 2,
 		/datum/reagent/consumable/nutriment = 2,
-		/datum/reagent/consumable/vitfro = 6
 		)
 	desc = "A cactus fruit covered in a thick, reddish skin. And some ash."
 	icon_state = "cactus_fruit"
@@ -434,7 +422,6 @@
 		/datum/reagent/consumable/sugar = 0.06,
 		/datum/reagent/consumable/ethanol = 0.04,
 		/datum/reagent/stabilizing_agent = 0.06,
-		/datum/reagent/toxin/minttoxin = 0.02
 		)
 
 /obj/item/reagent_containers/food/snacks/grown/ash_flora/shavings //for actual crafting
@@ -453,7 +440,6 @@
 	reagents_add = list(
 		/datum/reagent/consumable/nutriment = 0.06,
 		/datum/reagent/consumable/vitfro = 0.04,
-		/datum/reagent/drug/nicotine = 0.04
 		)
 
 /obj/item/reagent_containers/food/snacks/grown/ash_flora/mushroom_leaf
@@ -462,7 +448,6 @@
 	list_reagents = list(
 		/datum/reagent/consumable/nutriment = 3,
 		/datum/reagent/consumable/vitfro = 2,
-		/datum/reagent/drug/nicotine = 2
 		)
 	icon_state = "mushroom_leaf"
 	seed = /obj/item/seeds/lavaland/porcini
@@ -480,17 +465,13 @@
 	genes = list(/datum/plant_gene/trait/plant_type/fungal_metabolism, /datum/plant_gene/trait/fire_resistance)
 	growing_icon = 'icons/obj/hydroponics/growing_mushrooms.dmi'
 	reagents_add = list(
-		/datum/reagent/toxin/mindbreaker = 0.04,
 		/datum/reagent/consumable/entpoly = 0.08,
-		/datum/reagent/drug/mushroomhallucinogen = 0.04
 		)
 /obj/item/reagent_containers/food/snacks/grown/ash_flora/mushroom_cap
 	name = "mushroom cap"
 	desc = "The cap of a large mushroom."
 	list_reagents = list(
-		/datum/reagent/toxin/mindbreaker = 2,
 		/datum/reagent/consumable/entpoly = 4,
-		/datum/reagent/drug/mushroomhallucinogen = 2
 		)
 	icon_state = "mushroom_cap"
 	seed = /obj/item/seeds/lavaland/inocybe
@@ -510,7 +491,6 @@
 	reagents_add = list(
 		/datum/reagent/consumable/tinlux = 0.04,
 		/datum/reagent/consumable/nutriment/vitamin = 0.02,
-		/datum/reagent/drug/space_drugs = 0.02
 		)
 
 /obj/item/reagent_containers/food/snacks/grown/ash_flora/mushroom_stem
@@ -519,7 +499,6 @@
 	list_reagents = list(
 		/datum/reagent/consumable/tinlux = 2,
 		/datum/reagent/consumable/nutriment/vitamin = 1,
-		/datum/reagent/drug/space_drugs = 1
 		)
 	icon_state = "mushroom_stem"
 	seed = /obj/item/seeds/lavaland/ember

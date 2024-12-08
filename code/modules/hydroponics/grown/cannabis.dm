@@ -16,8 +16,7 @@
 	icon_dead = "cannabis-dead" // Same for the dead icon
 	genes = list(/datum/plant_gene/trait/repeated_harvest)
 	reagents_add = list(
-		/datum/reagent/drug/space_drugs = 0.15,
-		/datum/reagent/toxin/lipolicide = 0.35
+		/datum/reagent/consumable/nutriment = 2
 	)// gives u the munchies
 // ---------------------------------------------------------------
 
