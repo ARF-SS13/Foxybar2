@@ -1,7 +1,7 @@
 // If I could have gotten away with using a tilde in the type path, I would have.
 /datum/interaction/lewd
 	// Description can take in %COCK% as a wildcard to get replaced with a cock/strapon accordingly.
-	description = "Partner/Crotch - Slap their ass."
+	description = "PLSNOINIT"
 	help_messages = list(
 		"XU_NAME slaps XT_NAME right on the ass!"
 	)
