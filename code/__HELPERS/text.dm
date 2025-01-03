@@ -294,6 +294,14 @@
 		. = t[1]
 		return uppertext(.) + copytext(t, 1 + length(.))
 
+//returns a string where all the words separated by spaces are capitalized
+/proc/capitalize_all(str)
+	var/list/words = splittext(str, " ")
+	var/list/out = list()
+	for(var/word in words)
+		out += capitalize(word)
+	return jointext(out, " ")
+
 /proc/stringmerge(text,compare,replace = "*")
 //This proc fills in all spaces with the "replace" var (* by default) with whatever
 //is in the other string at the same spot (assuming it is not a replace char).

@@ -51,6 +51,8 @@
 #define MAX_CHARTER_LEN			80
 
 // Template for OOC notes.
+#define OOC_NOTE_TEMPLATE ""
+/* 
 #define OOC_NOTE_TEMPLATE "Non-ERP Notes\n\
 	This exist for things like how to approach this character for IC things such as how to ask for going on adventurers!\n\
 	But this person hasn't changed the info yet!\n\
@@ -90,7 +92,7 @@
 	\n\
 	...Desired RP System: Ask, this is for subtle, subtler, or emote.  Or, when its added, a mechanical erotic roleplay system!  Or some mix inbetween, but this person hasn't changed the text so ASK!\n\
 	.My Post Perspective: Ask!"
-
+ */
 #define BACKGROUND_INFO_NOTE_TEMPLATE "Background Info Template\n\
 	Keep in mind that you do not need to have answers for all of these questions from the word go, but having answers for some of them should greatly improve your playing experience due to it solidifying your character more robustly in a very fluid world.\n\
 	BiG FeNnys wIdE waRning: So, I'm passing this information to you as a player on my own server with thousands of hours roleplaying here.  While I understand that shy people do absolutely exist and that playing one may be something that you want to do (or maybe you just are shy and your character is as well by extension) understand that the more of these answers you can define the better off you're going to be.  Being shy here is much like being shy in the real world, you often end up spending a lot of time by yourself.  If that is not your long term goal then you should, by all means, do what you can to fight back against your shyness.  Because I can say with all certainty that if its people you want to hang out with standing alone on top of a building wishing that you were talking to someone is about the slowest way to find someone to actually talk to.\n\

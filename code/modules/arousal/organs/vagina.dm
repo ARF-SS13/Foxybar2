@@ -7,7 +7,7 @@
 	slot = "vagina"
 	size = 1 //There is only 1 size right now
 	shape = DEF_VAGINA_SHAPE
-	genital_flags = CAN_MASTURBATE_WITH|GENITAL_CAN_AROUSE|GENITAL_CAN_RECOLOR|GENITAL_CAN_RESHAPE
+	genital_flags = DEF_VAG_FLAGS
 	masturbation_verb = "finger"
 	arousal_verb = "I feel wetness on your crotch"
 	unarousal_verb = "I no longer feel wet"
@@ -22,7 +22,13 @@
 	var/list/vag_types = list("tentacle", "dentata", "hairy", "spade", "furred", "inconspicuous")
 	associated_has = CS_VAG // for cockstring stuff
 	hide_flag = HIDE_VAG // for hideflag stuff
+	shape_key = "vag_shape"
+	size_key = "vag_size"
+	color_key = "vag_color"
+	vis_flags_key = "vag_visibility_flags"
+	override_key = "vag_visibility_override"
 	pornhud_slot = PHUD_VAG
+	pickable = TRUE
 
 /obj/item/organ/genital/vagina/format_for_tgui()
 	var/list/out = list()
@@ -110,6 +116,9 @@
 /// Returns its respective sprite accessory from the global list (full of init'd types, hopefully)
 /obj/item/organ/genital/vagina/get_sprite_accessory()
 	return GLOB.vagina_shapes_list[shape]
+
+/obj/item/organ/genital/vagina/GetShapeList()
+	return GLOB.vagina_shapes_list
 
 /obj/item/organ/genital/vagina/get_layer_number(position)
 	switch(position)

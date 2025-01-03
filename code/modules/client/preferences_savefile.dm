@@ -136,7 +136,24 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 			if(PMC_MOMMYCHAT_IS_COOL) // i broke it =3
 				pda_skin = "Random!"
 				WRITE_FILE(S["pda_skin"], pda_skin)
-				current_version |= PMC_MY_PDA_FLIES_IN_FULL_COLOR
+				current_version |= PMC_MOMMYCHAT_IS_COOL
+			if(PMR_REMOVE_CORK_STRING) // i broke it =3
+				var/corkstring = ""
+				S["feature_genital_order"] >> corkstring
+				var/list/corkboard = splittext(corkstring, ":")
+				var/newjson = json_encode(corkboard)
+				WRITE_FILE(S["feature_genital_order"], newjson)
+				current_version |= PMR_REMOVE_CORK_STRING
+			// if(PMC_MARKINGS_GET_AN_ACTUAL_UID) // i broke it =3
+			// 	var/list/markings = list()
+			// 	if(S["feature_mam_body_markings"])
+			// 		markings = safe_json_decode(S["feature_mam_body_markings"])
+			// 	if(islist(markings))
+			// 		for(var/list/mark in markings)
+			// 			mark.len = 4
+			// 			mark[4] = GenerateMarkingUID()
+			// 		WRITE_FILE(S["feature_mam_body_markings"], safe_json_encode(markings))
+			// 	current_version |= PMC_MARKINGS_GET_AN_ACTUAL_UID
 			if(PMC_FENNY_FINISHED_124_QUESTS) // i broke it =3
 				current_version |= PMC_FENNY_FINISHED_124_QUESTS
 				var/list/huge_quest_list = list()
@@ -893,8 +910,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["feature_vag_visibility_flags"]	>> features["vag_visibility_flags"]
 	//womb features
 	S["feature_has_womb"]				>> features["has_womb"]
-	//cockstring
-	S["feature_genital_order"]			>> features["genital_order"]
+	features["genital_order"] = safe_json_decode(S["feature_genital_order"])
 	S["feature_genital_hide"]			>> features["genital_hide"]
 	S["feature_genital_visibility_flags"] >> features["genital_visibility_flags"]
 	//taste
@@ -952,12 +968,12 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["visualchat_use_contrasting_color"]		>> visualchat_use_contrasting_color // Hair gradients electric boogaloo 2!!
 	S["visualchat_see_horny_radio"]		>> visualchat_see_horny_radio // Hair gradients electric boogaloo 2!!
 
-	S["gradient_color"]		>> features_override["grad_color"] // Hair gradients!
-	S["gradient_style"]		>> features_override["grad_style"] // Hair gradients electric boogaloo 2!!
-	S["gradient_color_2"]	>> features_override["grad_color_2"] // Hair gradients!
-	S["gradient_style_2"]	>> features_override["grad_style_2"] // Hair gradients electric boogaloo 2!!
-	S["s_hair_color_2"]		>> features_override["hair_color_2"] // Hair color 2
-	S["s_hair_style_2"]		>> features_override["hair_style_2"] // Hair style 2
+	S["gradient_color"]		>> features["grad_color"] // Hair gradients!
+	S["gradient_style"]		>> features["grad_style"] // Hair gradients electric boogaloo 2!!
+	S["gradient_color_2"]	>> features["grad_color_2"] // Hair gradients!
+	S["gradient_style_2"]	>> features["grad_style_2"] // Hair gradients electric boogaloo 2!!
+	S["s_hair_color_2"]		>> features["hair_color_2"] // Hair color 2
+	S["s_hair_style_2"]		>> features["hair_style_2"] // Hair style 2
 	S["typing_indicator_sound"]					>> features_speech["typing_indicator_sound"] // Typing sounds!
 	S["typing_indicator_sound_play"]			>> features_speech["typing_indicator_sound_play"] // Typing sounds electric- you know what I'm gonna stop its not funny anymore.
 	S["typing_indicator_speed"]					>> features_speech["typing_indicator_speed"]
@@ -1245,7 +1261,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	security_records				= copytext(security_records, 1, MAX_FLAVOR_LEN)
 	medical_records					= copytext(medical_records, 1, MAX_FLAVOR_LEN)
 
-	features["genital_order"]		= sanitize_text(features["genital_order"], DEF_COCKSTRING)
+	features["genital_order"]		= sanitize_islist(features["genital_order"], PREFS_ALL_HAS_GENITALS)
 	features["genital_hide"]		= sanitize_integer(features["genital_hide"], 0, 4096, 0)
 	features["taste"]				= copytext(features["taste"], 1, MAX_TASTE_LEN)
 	features["flavor_text"]			= copytext(features["flavor_text"], 1, MAX_FLAVOR_LEN)
@@ -1305,6 +1321,17 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 					if(S["feature_[tertiary_string]"])
 						S["feature_[tertiary_string]"]		>> features[tertiary_string]
 
+	//Sanitize markings
+	for(var/list/marking in features["mam_body_markings"])
+		marking.len = MARKING_LIST_LENGTH
+		if(LAZYLEN(marking[MARKING_COLOR_LIST]) != 3)
+			for(var/indx in 1 to 3)
+				if(marking[MARKING_COLOR_LIST][indx])
+					continue
+				marking[MARKING_COLOR_LIST][indx] = "FFFFFF"
+			if(!marking[MARKING_UID])
+				marking[MARKING_UID] = GenerateMarkingUID()
+
 	persistent_scars = sanitize_integer(persistent_scars)
 	scars_list["1"] = sanitize_text(scars_list["1"])
 	scars_list["2"] = sanitize_text(scars_list["2"])
@@ -1321,14 +1348,14 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	SSchat.SanitizeUserImages(src)
 	SSchat.SanitizeUserPreferences(src)
 
-	features_override["grad_color"]		= sanitize_hexcolor(features_override["grad_color"], 6, FALSE, default = COLOR_ALMOST_BLACK)
-	features_override["grad_style"]		= sanitize_inlist(features_override["grad_style"], GLOB.hair_gradients, "none")
+	features["grad_color"]		= sanitize_hexcolor(features["grad_color"], 6, FALSE, default = COLOR_ALMOST_BLACK)
+	features["grad_style"]		= sanitize_inlist(features["grad_style"], GLOB.hair_gradients, "none")
 
-	features_override["grad_color_2"]		= sanitize_hexcolor(features_override["grad_color_2"], 6, FALSE, default = COLOR_ALMOST_BLACK)
-	features_override["grad_style_2"]		= sanitize_inlist(features_override["grad_style_2"], GLOB.hair_gradients, "none")
+	features["grad_color_2"]		= sanitize_hexcolor(features["grad_color_2"], 6, FALSE, default = COLOR_ALMOST_BLACK)
+	features["grad_style_2"]		= sanitize_inlist(features["grad_style_2"], GLOB.hair_gradients, "none")
 
-	features_override["hair_color_2"]	= sanitize_hexcolor(features_override["hair_color_2"], 6, FALSE, default = COLOR_ALMOST_BLACK)
-	features_override["hair_style_2"]	= sanitize_inlist(features_override["hair_style_2"], GLOB.hair_styles_list, "Bald")
+	features["hair_color_2"]	= sanitize_hexcolor(features["hair_color_2"], 6, FALSE, default = COLOR_ALMOST_BLACK)
+	features["hair_style_2"]	= sanitize_inlist(features["hair_style_2"], GLOB.hair_styles_list, "Bald")
 	
 	if(!LAZYLEN(GLOB.typing_sounds))
 		SStypinginit.populate_typing_list()//This list is initialized late, so if a savefile is saved during initialization (they almost always are), they might lose their sound selection. Manually populate it early, in that case.
@@ -1510,7 +1537,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["feature_belly_shape"], features["belly_shape"])
 	WRITE_FILE(S["feature_belly_visibility"], features["belly_visibility"])
 	WRITE_FILE(S["feature_belly_visibility_flags"], features["belly_visibility_flags"])
-	WRITE_FILE(S["feature_genital_order"], features["genital_order"])
+	WRITE_FILE(S["feature_genital_order"], safe_json_encode(features["genital_order"]))
 	WRITE_FILE(S["feature_genital_hide"], features["genital_hide"])
 	WRITE_FILE(S["feature_genital_visibility_flags"], features["genital_visibility_flags"])
 
@@ -1634,14 +1661,14 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["creature_profilepic"],		creature_profilepic)
 	WRITE_FILE(S["creature_pfphost"],			creature_pfphost)
 
-	WRITE_FILE(S["gradient_color"]			, features_override["grad_color"])
-	WRITE_FILE(S["gradient_style"]			, features_override["grad_style"])
+	WRITE_FILE(S["gradient_color"]			, features["grad_color"])
+	WRITE_FILE(S["gradient_style"]			, features["grad_style"])
 
-	WRITE_FILE(S["gradient_color_2"]		, features_override["grad_color_2"])
-	WRITE_FILE(S["gradient_style_2"]		, features_override["grad_style_2"])
+	WRITE_FILE(S["gradient_color_2"]		, features["grad_color_2"])
+	WRITE_FILE(S["gradient_style_2"]		, features["grad_style_2"])
 
-	WRITE_FILE(S["s_hair_color_2"]			, features_override["hair_color_2"])
-	WRITE_FILE(S["s_hair_style_2"]			, features_override["hair_style_2"])
+	WRITE_FILE(S["s_hair_color_2"]			, features["hair_color_2"])
+	WRITE_FILE(S["s_hair_style_2"]			, features["hair_style_2"])
 
 	WRITE_FILE(S["typing_indicator_sound"]				, features_speech["typing_indicator_sound"])
 	WRITE_FILE(S["typing_indicator_sound_play"]			, features_speech["typing_indicator_sound_play"])

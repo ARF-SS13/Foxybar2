@@ -1,5 +1,10 @@
 //DEFINITIONS FOR ASSET DATUMS START HERE.
 
+/datum/asset/simple/coolcss
+	assets = list(
+		"cool.css" = 'html/browser/cool.css',
+	)
+
 /datum/asset/simple/tgui_common
 	keep_local_name = TRUE
 	assets = list(
@@ -153,7 +158,10 @@
 
 /datum/asset/simple/namespaced/common
 	assets = list("padlock.png" = 'icons/ui_icons/common/padlock.png')
-	parents = list("common.css" = 'html/browser/common.css')
+	parents = list(
+		"common.css" = 'html/browser/common.css',
+		"cool.css" = 'html/browser/cool.css',
+	)
 
 /datum/asset/simple/permissions
 	assets = list(

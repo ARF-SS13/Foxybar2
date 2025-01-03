@@ -726,17 +726,17 @@ SUBSYSTEM_DEF(job)
 			return
 		var/list/displaceables = DISPLACEABLE_SLOTS
 		for(var/i in chosen_gear)
-			var/datum/gear/G = istext(i[LOADOUT_ITEM]) ? text2path(i[LOADOUT_ITEM]) : i[LOADOUT_ITEM]
+			var/datum/gear/G = pathify(i[LOADOUT_ITEM])
 			if(!G) // aint there? ditch it
 				message_admins("Invalid gear in loadout for [the_mob] at slot [the_prefs.loadout_slot]: [i[LOADOUT_ITEM]]")
 				stack_trace("Invalid gear in loadout for [the_mob] at slot [the_prefs.loadout_slot]: [i[LOADOUT_ITEM]]")
-				the_prefs.remove_gear_from_loadout(the_prefs.loadout_slot, i[LOADOUT_ITEM])
+				the_prefs.RemoveGearFromLoadout(the_prefs.loadout_slot, i[LOADOUT_ITEM])
 				continue
 			G = GLOB.loadout_items[initial(G.category)][initial(G.subcategory)][initial(G.name)]
 			if(!G || !G.path) // are you *sure* its there? cus, it aint
 				message_admins("Invalid gear in loadout for [the_mob] at slot [the_prefs.loadout_slot]: [i[LOADOUT_ITEM]]. G.path is [G ? G.path : "wow it doesnt even have a fucking path, its a [G.type]"]. Eat me, Fenny.")
 				stack_trace("Invalid gear in loadout for [the_mob] at slot [the_prefs.loadout_slot]: [i[LOADOUT_ITEM]]. G.path is [G ? G.path : "wow it doesnt even have a fucking path, its a [G.type]"]. Eat me, Fenny.")
-				the_prefs.remove_gear_from_loadout(the_prefs.loadout_slot, i[LOADOUT_ITEM])
+				the_prefs.RemoveGearFromLoadout(the_prefs.loadout_slot, i[LOADOUT_ITEM])
 				continue
 			var/permitted = TRUE
 			if(!bypass_prereqs && G.restricted_roles && G.restricted_roles.len && !(M.mind.assigned_role in G.restricted_roles))
@@ -752,23 +752,23 @@ SUBSYSTEM_DEF(job)
 			if(!G || !G.path || !ispath(G.path)) // are you *sure* its there? cus, it aint
 				message_admins("Invalid gear in loadout for [the_mob] at slot [the_prefs.loadout_slot]: [i[LOADOUT_ITEM]]. G.path is [G ? G.path : "wow it doesnt even have a fucking path, its a [G.type]"]. Eat me, Fenny.")
 				stack_trace("Invalid gear in loadout for [the_mob] at slot [the_prefs.loadout_slot]: [i[LOADOUT_ITEM]]. G.path is [G ? G.path : "wow it doesnt even have a fucking path, its a [G.type]"]. Eat me, Fenny.")
-				the_prefs.remove_gear_from_loadout(the_prefs.loadout_slot, i[LOADOUT_ITEM])
+				the_prefs.RemoveGearFromLoadout(the_prefs.loadout_slot, i[LOADOUT_ITEM])
 				continue
 			var/obj/item/I = this_fucking_thing_keeps_runtiming_eat_my_ass(G)
 			if(!I)
 				message_admins("Invalid gear in loadout for [the_mob] at slot [the_prefs.loadout_slot]: [i[LOADOUT_ITEM]]. G.path is [G ? G.path : "wow it doesnt even have a fucking path, its a [G.type]"]. Eat me, Fenny.")
 				stack_trace("Invalid gear in loadout for [the_mob] at slot [the_prefs.loadout_slot]: [i[LOADOUT_ITEM]]. G.path is [G ? G.path : "wow it doesnt even have a fucking path, its a [G.type]"]. Eat me, Fenny.")
-				the_prefs.remove_gear_from_loadout(the_prefs.loadout_slot, i[LOADOUT_ITEM])
+				the_prefs.RemoveGearFromLoadout(the_prefs.loadout_slot, i[LOADOUT_ITEM])
 				continue
-			if(i[LOADOUT_CUSTOM_NAME])
+			if(LAZYLEN(i[LOADOUT_CUSTOM_NAME]))
 				var/custom_name = i[LOADOUT_CUSTOM_NAME]
 				I.name = custom_name
-			if(i[LOADOUT_CUSTOM_DESCRIPTION])
+			if(LAZYLEN(i[LOADOUT_CUSTOM_DESCRIPTION]))
 				var/custom_description = i[LOADOUT_CUSTOM_DESCRIPTION]
 				I.desc = custom_description
 			if(i[LOADOUT_CUSTOM_COLOR])
 				var/custom_cllor = i[LOADOUT_CUSTOM_COLOR]
-				I.color = "[custom_cllor]"
+				I.color = "#[custom_cllor]"
 			var/displace_me = FALSE
 			if(G.slot in displaceables) /// mm yes, displace me in my G.slot~
 				displace_me = TRUE

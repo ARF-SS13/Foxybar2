@@ -259,49 +259,49 @@ GLOBAL_LIST_INIT(typing_indicator_max_words_spoken_list, list(
 	return 1
 */
 
-/datum/preferences/process_link(mob/user, list/href_list)
-	switch(href_list["task"])
-		if("input")
-			switch(href_list["preference"])
-				if("typing_indicator_sound")
-					var/new_sound = input(user, "Choose your typing sound:", "Character Pogerenfe") as null|anything in GLOB.typing_sounds
-					if(new_sound)
-						features_speech["typing_indicator_sound"] = new_sound
+// /datum/preferences/process_link(mob/user, list/href_list)
+// 	switch(href_list["task"])
+// 		if("input")
+// 			switch(href_list["preference"])
+// 				// if("typing_indicator_sound")
+// 				// 	var/new_sound = input(user, "Choose your typing sound:", "Character Pogerenfe") as null|anything in GLOB.typing_sounds
+// 				// 	if(new_sound)
+// 				// 		features_speech["typing_indicator_sound"] = new_sound
 
-				if("typing_indicator_sound_play")
-					var/new_input = input(user, "Choose your typing sound behaviour", "I stink c:") as null|anything in GLOB.play_methods
-					if(new_input)
-						features_speech["typing_indicator_sound_play"] = new_input
+// 				// if("typing_indicator_sound_play")
+// 				// 	var/new_input = input(user, "Choose your typing sound behaviour", "I stink c:") as null|anything in GLOB.play_methods
+// 				// 	if(new_input)
+// 				// 		features_speech["typing_indicator_sound_play"] = new_input
 				
-				if("typing_indicator_speed")
-					var/new_input
-					new_input = input(user, "Choose your typing sound speed:", "Sound Indicator") as null|anything in GLOB.typing_indicator_speeds
-					if(new_input)
-						features_speech["typing_indicator_speed"] = new_input
+// 				// if("typing_indicator_speed")
+// 				// 	var/new_input
+// 				// 	new_input = input(user, "Choose your typing sound speed:", "Sound Indicator") as null|anything in GLOB.typing_indicator_speeds
+// 				// 	if(new_input)
+// 				// 		features_speech["typing_indicator_speed"] = new_input
 
-				if("typing_indicator_pitch")
-					var/new_input = input(user, "Choose your typing sound pitch:", "Sound Indicator") as null|anything in GLOB.typing_indicator_pitches
-					if(new_input)
-						features_speech["typing_indicator_pitch"] = new_input
+// 				// if("typing_indicator_pitch")
+// 				// 	var/new_input = input(user, "Choose your typing sound pitch:", "Sound Indicator") as null|anything in GLOB.typing_indicator_pitches
+// 				// 	if(new_input)
+// 				// 		features_speech["typing_indicator_pitch"] = new_input
 
-				if("typing_indicator_variance")
-					var/new_input
-					new_input = input(user, "Choose your typing sound variance:", "Sound Indicator") as null|anything in GLOB.typing_indicator_variances
-					if(new_input)
-						features_speech["typing_indicator_variance"] = new_input
+// 				// if("typing_indicator_variance")
+// 				// 	var/new_input
+// 				// 	new_input = input(user, "Choose your typing sound variance:", "Sound Indicator") as null|anything in GLOB.typing_indicator_variances
+// 				// 	if(new_input)
+// 				// 		features_speech["typing_indicator_variance"] = new_input
 	
-				if("typing_indicator_volume")
-					var/new_input
-					new_input = input(user, "Choose your typing sound volume:", "Sound Indicator") as null|anything in GLOB.typing_indicator_volumes
-					if(new_input)
-						features_speech["typing_indicator_volume"] = new_input
+// 				// if("typing_indicator_volume")
+// 				// 	var/new_input
+// 				// 	new_input = input(user, "Choose your typing sound volume:", "Sound Indicator") as null|anything in GLOB.typing_indicator_volumes
+// 				// 	if(new_input)
+// 				// 		features_speech["typing_indicator_volume"] = new_input
 
-				if("typing_indicator_max_words_spoken")
-					var/new_input
-					new_input = input(user, "Choose your maximum number of audible words: (Only animal crossing speech uses this)", "Sound Indicator") as null|anything in GLOB.typing_indicator_max_words_spoken_list
-					if(new_input)
-						features_speech["typing_indicator_max_words_spoken"] = new_input
-	..()
+// 				// if("typing_indicator_max_words_spoken")
+// 				// 	var/new_input
+// 				// 	new_input = input(user, "Choose your maximum number of audible words: (Only animal crossing speech uses this)", "Sound Indicator") as null|anything in GLOB.typing_indicator_max_words_spoken_list
+// 				// 	if(new_input)
+// 				// 		features_speech["typing_indicator_max_words_spoken"] = new_input
+// 	..()
 
 /datum/preferences/copy_to(mob/living/carbon/human/character, icon_updates = 1, roundstart_checks = TRUE, initial_spawn = FALSE, sans_underpants = FALSE)
 	features += features_speech

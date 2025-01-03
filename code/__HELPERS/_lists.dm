@@ -947,10 +947,17 @@
 		return maybelist
 	return list(maybelist)
 
+// Takes in something that might be a number, and returns something that is a nummmber
 /proc/numberfy(maybenum)
 	if(isnum(maybenum))
 		return maybenum
 	return text2num(maybenum)
+
+// Takes in something that might be a path, and returns something that is a path
+/proc/pathify(maybepath)
+	if(ispath(maybepath))
+		return maybepath
+	return text2path(maybepath)
 
 /// Used to have a var automagically swap between a list of options
 /// returns the next option (or the first if its the end)

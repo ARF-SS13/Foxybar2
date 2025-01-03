@@ -49,7 +49,7 @@
 /datum/preferences/proc/update_preview_icon(current_tab)
 	var/equip_job = TRUE
 	switch(current_tab)
-		if(APPEARANCE_TAB)
+		if(PPT_CHARCTER_APPEARANCE)
 			equip_job = FALSE
 		if(ERP_TAB)
 			equip_job = FALSE
@@ -74,7 +74,7 @@
 	mannequin.add_overlay(the_floor)
 	copy_to(mannequin, initial_spawn = TRUE, sans_underpants = preview_hide_undies)
 
-	if(current_tab == LOADOUT_TAB)
+	if(current_tab == PPT_LOADOUT)
 		//give it its loadout if not on the appearance tab
 		SSjob.equip_loadout(parent.mob, mannequin, FALSE, bypass_prereqs = TRUE, can_drop = FALSE)
 	else

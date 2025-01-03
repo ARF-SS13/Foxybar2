@@ -400,7 +400,7 @@ SUBSYSTEM_DEF(pornhud)
 	var/mob/living/carbon/human/myowner = GET_WEAKREF(owner)
 	if(!ishuman(myowner))
 		return
-	var/list/image_order = myowner.dna.decode_cockstring(FALSE)
+	var/list/image_order = myowner.dna.features["genital_order"]
 	var/preflag = is_whitelisted(P.parent.mob) ? NONE : P.features["genital_hide"]
 	for(var/entry in image_order)
 		switch(entry)

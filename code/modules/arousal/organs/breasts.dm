@@ -13,7 +13,7 @@
 	fluid_rate = MILK_RATE
 	layer_index = BREAST_LAYER_INDEX
 	shape = DEF_BREASTS_SHAPE
-	genital_flags = CAN_MASTURBATE_WITH|CAN_CLIMAX_WITH|GENITAL_FLUID_PRODUCTION|GENITAL_CAN_AROUSE|UPDATE_OWNER_APPEARANCE|GENITAL_CAN_RECOLOR|GENITAL_CAN_RESIZE|GENITAL_CAN_RESHAPE
+	genital_flags = DEF_BREASTS_FLAGS
 	masturbation_verb = "massage"
 	arousal_verb = "My breasts start feeling sensitive"
 	unarousal_verb = "My breasts no longer feel sensitive"
@@ -22,6 +22,13 @@
 	associated_has = CS_BOOB // for cockstring stuff
 	hide_flag = HIDE_BOOBS // for hideflag stuff
 	pornhud_slot = PHUD_BOOB
+	shape_key = "breasts_shape"
+	size_key = "breasts_size"
+	color_key = "breasts_color"
+	vis_flags_key = "breasts_visibility_flags"
+	override_key = "breasts_visibility_override"
+	size_units = "Cupsize"
+	pickable = TRUE
 
 GLOBAL_LIST_INIT(breast_values, list(
 	"a" = 1,
@@ -204,7 +211,7 @@ GLOBAL_LIST_INIT(massive_breast_descriptors, list(
 	return "[uppertext(size)]-cup"
 
 /obj/item/organ/genital/breasts/resize_genital(mob/user)
-	var/new_size = input(user, "Pick a new cup size", "Character Preference", size) as null|anything in CONFIG_GET(keyed_list/breasts_cups_prefs)
+	var/new_size = input(user, "Pick a new cup size", "Character Preference", size) as null|anything in GetSizeList()
 	if(new_size)
 		set_size(new_size)
 	. = ..()
@@ -234,6 +241,15 @@ GLOBAL_LIST_INIT(massive_breast_descriptors, list(
 /// Returns its respective sprite accessory from the global list (full of init'd types, hopefully)
 /obj/item/organ/genital/breasts/get_sprite_accessory()
 	return GLOB.breasts_shapes_list[shape]
+
+/obj/item/organ/genital/breasts/GetShapeList()
+	return GLOB.breasts_shapes_list
+
+/obj/item/organ/genital/breasts/GetSizeList()
+	return GLOB.breast_values
+
+/obj/item/organ/genital/breasts/GetSizeKind()
+	return "<SIZE>-cup"
 
 /obj/item/organ/genital/breasts/get_layer_number(position)
 	switch(position)

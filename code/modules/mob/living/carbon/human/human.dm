@@ -589,7 +589,7 @@ GLOBAL_VAR_INIT(crotch_call_cooldown, 0)
 		if("change_genital_whitelist")
 			if(!client?.prefs)
 				return
-			client.prefs.update_genital_whitelist()
+			client.prefs.ChangePHUDWhitelist()
 			SSpornhud.request_every_genital(src)
 			update_body(TRUE)
 			show_genital_hide_panel()

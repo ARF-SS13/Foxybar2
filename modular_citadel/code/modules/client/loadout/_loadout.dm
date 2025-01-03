@@ -5,6 +5,7 @@
 // and lastly, restricted_roles list allows you to let someone spawn with certain items only if the job they spawned with is on the list.
 
 GLOBAL_LIST_EMPTY(loadout_items)
+GLOBAL_LIST_EMPTY(flat_loadout_items)
 GLOBAL_LIST_EMPTY(loadout_whitelist_ids)
 
 /proc/load_loadout_config(loadout_config)
@@ -26,14 +27,17 @@ GLOBAL_LIST_EMPTY(loadout_whitelist_ids)
 
 /proc/initialize_global_loadout_items()
 	load_loadout_config()
+	var/list/flatlyss = list()
+	var/list/fatlyss = list()
 	for(var/item in subtypesof(/datum/gear))
 		var/datum/gear/I = item
 		if(!initial(I.name))
 			continue
 		I = new item
-		LAZYINITLIST(GLOB.loadout_items[I.category])
-		LAZYINITLIST(GLOB.loadout_items[I.category][I.subcategory])
-		GLOB.loadout_items[I.category][I.subcategory][I.name] = I
+		LAZYINITLIST(fatlyss[I.category])
+		LAZYINITLIST(fatlyss[I.category][I.subcategory])
+		fatlyss[I.category][I.subcategory] += I
+		flatlyss += I
 		if(islist(I.geargroupID))
 			var/list/ggidlist = I.geargroupID
 			I.ckeywhitelist = list()
@@ -42,6 +46,18 @@ GLOBAL_LIST_EMPTY(loadout_whitelist_ids)
 					I.ckeywhitelist |= GLOB.loadout_whitelist_ids["[entry]"]
 		else if(I.geargroupID in GLOB.loadout_whitelist_ids)
 			I.ckeywhitelist = GLOB.loadout_whitelist_ids["[I.geargroupID]"]
+	flatlyss = sort_list(flatlyss, /proc/cmp_gear_name_asc)
+	for(var/datum/gear/item in flatlyss)
+		GLOB.flat_loadout_items[item.name] = item
+	for(var/cat in fatlyss)
+		for(var/subcat in fatlyss[cat])
+			fatlyss[cat][subcat] = sort_list(fatlyss[cat][subcat], /proc/cmp_gear_name_asc)
+			for(var/datum/gear/item in fatlyss[cat][subcat])
+				LAZYINITLIST(GLOB.loadout_items[item.category])
+				LAZYINITLIST(GLOB.loadout_items[item.category][item.subcategory])
+				GLOB.loadout_items[item.category][item.subcategory][item.name] = item
+
+
 
 
 /datum/gear

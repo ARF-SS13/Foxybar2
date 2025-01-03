@@ -293,7 +293,7 @@ GLOBAL_LIST_INIT(belly_descriptors, list(
 	slot = ORGAN_SLOT_BELLY
 	w_class = WEIGHT_CLASS_NORMAL
 	size = 1
-	genital_flags = UPDATE_OWNER_APPEARANCE|GENITAL_CAN_RECOLOR|GENITAL_CAN_RESIZE|GENITAL_CAN_RESHAPE
+	genital_flags = DEF_BELLY_FLAGS
 	layer_index = BELLY_LAYER_INDEX
 	shape = DEF_BELLY_SHAPE // either tummy or obese
 	masturbation_verb = "massage"
@@ -301,6 +301,13 @@ GLOBAL_LIST_INIT(belly_descriptors, list(
 	associated_has = CS_BELLY // for cockstring stuff
 	hide_flag = HIDE_BELLY // for hideflag stuff
 	pornhud_slot = PHUD_BELLY
+	shape_key = "belly_shape"
+	size_key = "belly_size"
+	color_key = "belly_color"
+	vis_flags_key = "belly_visibility_flags"
+	override_key = "belly_visibility_override"
+	size_units = "XL"
+	pickable = TRUE
 
 /obj/item/organ/genital/belly/format_for_tgui()
 	var/list/out = list()
@@ -389,8 +396,8 @@ GLOBAL_LIST_INIT(belly_descriptors, list(
 	return "[size]XL"
 
 /obj/item/organ/genital/belly/resize_genital(mob/user)
-	var/min_size = CONFIG_GET(number/belly_min_size_prefs)
-	var/max_size = CONFIG_GET(number/belly_max_size_prefs)
+	var/min_size = GetMinSize()
+	var/max_size = GetMaxSize()
 	var/new_size = input(user, "Belly size:\n([min_size]-[max_size])", "Character Preference") as num|null
 	if(new_size)
 		set_size(clamp(round(new_size), min_size, max_size))
@@ -406,6 +413,18 @@ GLOBAL_LIST_INIT(belly_descriptors, list(
 /// Returns its respective sprite accessory from the global list (full of init'd types, hopefully)
 /obj/item/organ/genital/belly/get_sprite_accessory()
 	return GLOB.belly_shapes_list[shape]
+
+/obj/item/organ/genital/belly/GetShapeList()
+	return GLOB.belly_shapes_list
+
+/obj/item/organ/genital/belly/GetMinSize()
+	return BELLY_SIZE_MIN
+
+/obj/item/organ/genital/belly/GetMaxSize()
+	return BELLY_SIZE_MAX
+
+/obj/item/organ/genital/belly/GetSizeKind()
+	return "<SIZE>XL"
 
 /obj/item/organ/genital/belly/get_layer_number(position)
 	switch(position)

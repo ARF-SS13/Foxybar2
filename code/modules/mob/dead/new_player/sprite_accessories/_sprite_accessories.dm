@@ -81,6 +81,56 @@
 /datum/sprite_accessory/proc/is_not_visible(mob/living/carbon/human/H, tauric) //return if the accessory shouldn't be shown
 	return FALSE
 
+/datum/sprite_accessory/proc/ShouldHaveSecondaryColor() //return if the accessory shouldn't be shown
+	if(color_src == MATRIXED)
+		if(matrixed_sections in list(MATRIX_RED_BLUE, MATRIX_GREEN_BLUE, MATRIX_RED_GREEN, MATRIX_ALL))
+			return TRUE
+		return TRUE
+	else if(extra)
+		if(extra_color_src in list(MUTCOLORS, MUTCOLORS2, MUTCOLORS3))
+			return TRUE
+	return FALSE
+
+/datum/sprite_accessory/proc/ShouldHaveTertiaryColor() //return if the accessory shouldn't be shown
+	if(!ShouldHaveSecondaryColor())
+		return FALSE // BUT THE PERFORMANCE HIT how about i hit you
+	if(color_src == MATRIXED)
+		if(matrixed_sections == MATRIX_ALL)
+			return TRUE
+	else if(extra2)
+		if(extra2_color_src in list(MUTCOLORS, MUTCOLORS2, MUTCOLORS3))
+			return TRUE
+	return FALSE
+
+	/// pooj's hall of shame
+/*
+	dat += "<b>Primary Color</b><BR>"
+	dat += "<span style='border:1px solid #161616; background-color: #[features[primary_feature]];'>&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=[primary_feature];task=input'>Change</a><BR>"
+	if((accessory.color_src == MATRIXED && (matrixed_sections == MATRIX_RED_BLUE || matrixed_sections == MATRIX_GREEN_BLUE || matrixed_sections == MATRIX_RED_GREEN || matrixed_sections == MATRIX_ALL)) || (accessory.extra && (accessory.extra_color_src == MUTCOLORS || accessory.extra_color_src == MUTCOLORS2 || accessory.extra_color_src == MUTCOLORS3)))
+		dat += "<b>Secondary Color</b><BR>"
+		dat += "<span style='border:1px solid #161616; background-color: #[features[secondary_feature]];'>&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=[secondary_feature];task=input'>Change</a><BR>"
+		if((accessory.color_src == MATRIXED && matrixed_sections == MATRIX_ALL) || (accessory.extra2 && (accessory.extra2_color_src == MUTCOLORS || accessory.extra2_color_src == MUTCOLORS2 || accessory.extra2_color_src == MUTCOLORS3)))
+			dat += "<b>Tertiary Color</b><BR>"
+			dat += "<span style='border:1px solid #161616; background-color: #[features[tertiary_feature]];'>&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=[tertiary_feature];task=input'>Change</a><BR>"
+	if((accessory.color_src == MATRIXED && \
+		(matrixed_sections == MATRIX_RED_BLUE || \
+		matrixed_sections == MATRIX_GREEN_BLUE || \
+		matrixed_sections == MATRIX_RED_GREEN || \
+		matrixed_sections == MATRIX_ALL)) || \
+		(accessory.extra && \
+			(accessory.extra_color_src == MUTCOLORS || \
+			accessory.extra_color_src == MUTCOLORS2 || \
+			accessory.extra_color_src == MUTCOLORS3))) // WTF IS THIS CONDITONAL, HOLY SHYT POOJ
+		dat += ColorBox(secondary_feature)
+		if((accessory.color_src == MATRIXED && matrixed_sections == MATRIX_ALL) || \
+			(accessory.extra2 && \
+			(accessory.extra2_color_src == MUTCOLORS || \
+			accessory.extra2_color_src == MUTCOLORS2 || \
+			accessory.extra2_color_src == MUTCOLORS3)))
+			dat += ColorBox(tertiary_feature)
+
+ */
+
 /datum/sprite_accessory/underwear
 	icon = 'icons/mob/clothing/underwear.dmi'
 	var/has_color = FALSE
@@ -88,3 +138,8 @@
 	var/covers_groin = FALSE
 	var/covers_chest = FALSE
 	var/covers_belly = FALSE
+
+
+
+
+

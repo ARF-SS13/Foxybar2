@@ -9,7 +9,7 @@
 	arousal_verb = "My balls ache a little"
 	unarousal_verb = "My balls finally stop aching, again"
 	linked_organ_slot = ORGAN_SLOT_PENIS
-	genital_flags = CAN_MASTURBATE_WITH|MASTURBATE_LINKED_ORGAN|GENITAL_FLUID_PRODUCTION|UPDATE_OWNER_APPEARANCE|GENITAL_CAN_RECOLOR|GENITAL_CAN_RESHAPE|GENITAL_CAN_RESIZE
+	genital_flags = DEF_BALLS_FLAGS
 	var/size_name = "average"
 	shape = DEF_BALLS_SHAPE
 	fluid_id = /datum/reagent/consumable/semen
@@ -18,6 +18,13 @@
 	associated_has = CS_BALLS // for cockstring stuff
 	hide_flag = HIDE_BALLS // for hideflag stuff
 	pornhud_slot = PHUD_BALLS
+	shape_key = "balls_shape"
+	size_key = "balls_size"
+	color_key = "balls_color"
+	vis_flags_key = "balls_visibility_flags"
+	override_key = "balls_visibility_override"
+	size_units = "Decigrundles"
+	pickable = TRUE
 
 /obj/item/organ/genital/testicles/format_for_tgui()
 	var/list/out = list()
@@ -101,6 +108,18 @@
 /// Returns its respective sprite accessory from the global list (full of init'd types, hopefully)
 /obj/item/organ/genital/testicles/get_sprite_accessory()
 	return GLOB.balls_shapes_list[shape]
+
+/obj/item/organ/genital/testicles/GetShapeList()
+	return GLOB.balls_shapes_list
+
+/obj/item/organ/genital/testicles/GetMinSize()
+	return BALLS_SIZE_MIN
+
+/obj/item/organ/genital/testicles/GetMaxSize()
+	return BALLS_SIZE_MAX
+
+/obj/item/organ/genital/testicles/GetSizeKind()
+	return "<SIZE> decigrundle<S>"
 
 /// fun fact, these used to be broken cus of a typo
 /obj/item/organ/genital/testicles/get_layer_number(position)

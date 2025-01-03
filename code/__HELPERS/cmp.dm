@@ -158,3 +158,6 @@ GLOBAL_VAR_INIT(cmp_field, "name")
 
 /proc/cmp_typepaths_length_asc(A, B)
 	return length("[A]") - length("[B]")
+
+/proc/cmp_gear_name_asc(datum/gear/A, datum/gear/B)
+	return sorttext(B.name, A.name)
