@@ -4,33 +4,6 @@
 #define LOADOUT_SUBCATEGORY_NONE		"Miscellaneous"
 #define LOADOUT_SUBCATEGORIES_NONE		list("Miscellaneous")
 
-//the names of the Primary customization tabs
-#define PPT_CHARCTER_PROPERTIES "CharacterProperties"
-	// Subtabs for PPT_CHARCTER_PROPERTIES
-	#define PPT_CHARCTER_PROPERTIES_INFO  "CharInfo"
-	#define PPT_CHARCTER_PROPERTIES_VOICE "CharVoice"
-	#define PPT_CHARCTER_PROPERTIES_MISC  "CharMisc"
-#define PPT_CHARCTER_APPEARANCE "CharacterAppearance"
-	// Subtabs for PPT_CHARCTER_APPEARANCE
-	#define PPT_CHARCTER_APPEARANCE_MISC       "AppearanceMisc"
-	#define PPT_CHARCTER_APPEARANCE_HAIR_EYES  "AppearanceHairEyes"
-	#define PPT_CHARCTER_APPEARANCE_PARTS      "AppearanceParts"
-	#define PPT_CHARCTER_APPEARANCE_MARKINGS   "AppearanceMarkings"
-	#define PPT_CHARCTER_APPEARANCE_UNDERLYING "AppearanceUnderlying"
-		#define PPT_CHARCTER_APPEARANCE_UNDERLYING_UNDIES   "Underwear"
-		#define PPT_CHARCTER_APPEARANCE_UNDERLYING_LAYERING "Layering"
-		// the rest are has_binguses
-#define PPT_LOADOUT "Loadout"
-#define PPT_GAME_PREFERENCES "GamePreferences"
-	#define PPT_GAME_PREFERENCES_GENERAL  "PrefGeneral"
-	#define PPT_GAME_PREFERENCES_UI       "PrefUI"
-	#define PPT_GAME_PREFERENCES_CHAT     "PrefChat"
-	#define PPT_GAME_PREFERENCES_RUNECHAT "PrefRunechat"
-	#define PPT_GAME_PREFERENCES_GHOST    "PrefGhost"
-	#define PPT_GAME_PREFERENCES_AUDIO    "PrefAudio"
-	#define PPT_GAME_PREFERENCES_ADMIN    "PrefAdmin"
-	#define PPT_GAME_PREFERENCES_CONTENT  "PrefContent"
-#define PPT_KEYBINDINGS "Keybindings"
 
 #define CHAR_INFO_TAB 3
 #define ERP_TAB 4

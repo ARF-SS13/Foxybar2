@@ -369,7 +369,7 @@
 	if(ftbutless == initial(features["flavor_text"]))
 		ftbutless = "Click to add flavor text!"
 	if(LAZYLEN(ftbutless) > 100)
-		ftbutless = copytext(ftbutless, 0, 100) + "..."
+		ftbutless = copytext(ftbutless, 1, 100) + "..."
 	dat += PrefLink("[ftbutless]", PREFCMD_CHANGE_FLAVOR_TEXT)
 	dat += "</div>" // End of DIV A B A A
 	dat += "<div class='SettingFlexCol'>" // DIV A B A B
@@ -380,7 +380,7 @@
 	if(oocbutless == initial(features["ooc_notes"]))
 		oocbutless = "Click to add OOC notes!"
 	if(LAZYLEN(oocbutless) > 100)
-		oocbutless = copytext(oocbutless, 0, 100) + "..."
+		oocbutless = copytext(oocbutless, 1, 100) + "..."
 	dat += PrefLink("[oocbutless]", PREFCMD_CHANGE_OOC_NOTES)
 	dat += "</div>" // End of DIV A B A B
 	dat += "</div>" // End of DIV A B A
