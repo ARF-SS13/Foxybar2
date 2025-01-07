@@ -7,6 +7,7 @@
 GLOBAL_LIST_EMPTY(loadout_items)
 GLOBAL_LIST_EMPTY(flat_loadout_items)
 GLOBAL_LIST_EMPTY(loadout_whitelist_ids)
+GLOBAL_LIST_EMPTY(loadout_categories)
 
 /proc/load_loadout_config(loadout_config)
 	if(!loadout_config)
@@ -38,6 +39,8 @@ GLOBAL_LIST_EMPTY(loadout_whitelist_ids)
 		LAZYINITLIST(fatlyss[I.category][I.subcategory])
 		fatlyss[I.category][I.subcategory] += I
 		flatlyss += I
+		LAZYINITLIST(GLOB.loadout_categories[I.category])
+		GLOB.loadout_categories[I.category] |= I.subcategory
 		if(islist(I.geargroupID))
 			var/list/ggidlist = I.geargroupID
 			I.ckeywhitelist = list()
@@ -48,14 +51,14 @@ GLOBAL_LIST_EMPTY(loadout_whitelist_ids)
 			I.ckeywhitelist = GLOB.loadout_whitelist_ids["[I.geargroupID]"]
 	flatlyss = sort_list(flatlyss, /proc/cmp_gear_name_asc)
 	for(var/datum/gear/item in flatlyss)
-		GLOB.flat_loadout_items[item.name] = item
+		GLOB.flat_loadout_items[item.type] = item
 	for(var/cat in fatlyss)
 		for(var/subcat in fatlyss[cat])
 			fatlyss[cat][subcat] = sort_list(fatlyss[cat][subcat], /proc/cmp_gear_name_asc)
 			for(var/datum/gear/item in fatlyss[cat][subcat])
 				LAZYINITLIST(GLOB.loadout_items[item.category])
 				LAZYINITLIST(GLOB.loadout_items[item.category][item.subcategory])
-				GLOB.loadout_items[item.category][item.subcategory][item.name] = item
+				GLOB.loadout_items[item.category][item.subcategory][item.type] = item
 
 
 

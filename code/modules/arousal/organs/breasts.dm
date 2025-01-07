@@ -29,6 +29,7 @@
 	override_key = "breasts_visibility_override"
 	size_units = "Cupsize"
 	pickable = TRUE
+	one_or_some = "some"
 
 GLOBAL_LIST_INIT(breast_values, list(
 	"a" = 1,

@@ -25,6 +25,7 @@
 	override_key = "balls_visibility_override"
 	size_units = "Decigrundles"
 	pickable = TRUE
+	one_or_some = "some"
 
 /obj/item/organ/genital/testicles/format_for_tgui()
 	var/list/out = list()

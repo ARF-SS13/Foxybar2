@@ -11,6 +11,7 @@ GLOBAL_LIST_EMPTY(genital_data_system)
 	var/vis_flags_key
 	var/override_key
 	var/size_units = "Vix"
+	var/one_or_some = "one"
 	/// What flag is this associated with?
 	var/hide_flag = HIDE_MISC
 	var/pickable = FALSE // deprecated

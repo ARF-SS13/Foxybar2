@@ -8,6 +8,7 @@ import {
   AnimatedNumber,
   Box,
   Button,
+  ByondUi,
   Divider,
   Dropdown,
   Flex,
@@ -33,6 +34,7 @@ import { sanitizeText } from '../sanitize';
 const bigbutton_min_width = "200px";
 const LR_SettingNameWidth = "100px";
 const ColorBoxWidth = "100px";
+const DEF_TEXT_COLOR = "#00FF00"; // we hackerman now
 
 export const PreferencesMenu = (props, context) => {
   const { act, data } = useBackend(context);
@@ -50,6 +52,7 @@ export const PreferencesMenu = (props, context) => {
         style={{
           "background": "linear-gradient(180deg, #2F4F4F, #1F3A3A)",
         }}>
+        <StyleBlock />
         <Stack fill>
           <Stack.Item>
             <Stack fill vertical>
@@ -115,9 +118,11 @@ const CharacterSelect = (props, context) => {
 const CharacterButton = (props, context) => {
   const { act, data } = useBackend(context);
   const {
+    current_slot = 0,
+  } = data;
+  const {
     character,
     index,
-    current_slot,
   } = props;
   const charname = character ? character.name : `Character ${index + 1}`;
   const is_current = (index + 1) === current_slot;
@@ -142,7 +147,8 @@ const TabBlocks = (props, context) => {
     current_category = "",
     subcategory_tabs = [],
     current_subcategory = "",
-    subsubcategory_tabs = [],
+    subsubcategory_tabs_line1 = [],
+    subsubcategory_tabs_genitals = [],
     current_subsubcategory = "",
     tab2words = {}, // diccionario de tab a palabras para mostrar en el boton de tab (ej: "tab1": "Tab 1")
   } = data;
@@ -302,40 +308,11 @@ const MainWindow = (props, context) => {
       );
     case "PPT_LOADOUT":
       return (
-        <CharacterLoadout />
+        <Loadout />
       );
     case "PPT_GAME_PREFERENCES":
-    case "PPT_GAME_PREFERENCES_GENERAL":
       return (
-        <GamePreferencesGeneral />
-      );
-    case "PPT_GAME_PREFERENCES_UI":
-      return (
-        <GamePreferencesUI />
-      );
-    case "PPT_GAME_PREFERENCES_CHAT":
-      return (
-        <GamePreferencesChat />
-      );
-    case "PPT_GAME_PREFERENCES_RUNECHAT":
-      return (
-        <GamePreferencesRunechat />
-      );
-    case "PPT_GAME_PREFERENCES_GHOST":
-      return (
-        <GamePreferencesGhost />
-      );
-    case "PPT_GAME_PREFERENCES_AUDIO":
-      return (
-        <GamePreferencesAudio />
-      );
-    case "PPT_GAME_PREFERENCES_ADMIN":
-      return (
-        <GamePreferencesAdmin />
-      );
-    case "PPT_GAME_PREFERENCES_CONTENT":
-      return (
-        <GamePreferencesContent />
+        <Options />
       );
     case "PPT_KEYBINDINGS":
       return (
@@ -1254,6 +1231,812 @@ const CharacterMarkings = (props, context) => {
   );
 };
 
+// This is the character undies! It's a form that you can fill out to set your
+// character's unmentionables!
+const CharacterUndies = (props, context) => {
+  const { act, data } = useBackend(context);
+  const {
+    undies = [],
+  } = data;
+
+  return (
+    <Section fill>
+      <Stack fill vertical>
+        {undies.map((undie, index) => (
+          <Stack.Item key={index}>
+            <LovelyUndie undie={undie} />
+          </Stack.Item>
+        ))}
+      </Stack>
+    </Section>
+  );
+};
+
+// This is the character layering! It's a cool table that lets you rearrange
+// your genitals to show them off nicely!
+const CharacterLayering = (props, context) => {
+  const { act, data } = useBackend(context);
+  const {
+    genitals = [],
+  } = data;
+  // format of genitals:
+  // [
+  //   {
+  //     "displayname": "Poon",
+  //     "has_key": "has_poon",
+  //     "respect_clothing": false,
+  //     "respect_underwear": false,
+  //     "override_coverings": "None",
+  //     "see_on_others": true,
+  //     "has_one": true,
+  //     "uparrow": true,
+  //     "downarrow": true,
+  //   }, ... boob yeah
+  // ],
+
+  const nothas_class = (has) => {
+    return has ? "" : "GenitalLayeringTableNothas";
+  };
+
+  return (
+    <Section fill>
+      <Table
+        className="GenitalLayeringTable">
+        <Table.Row
+          className="GenitalLayeringTableHeader">
+          <Table.Cell>
+            Genital
+          </Table.Cell>
+          <Table.Cell
+            style={{
+              'colspan': 2,
+            }}>
+            Shift
+          </Table.Cell>
+          <Table.Cell
+            style={{
+              'colspan': 2,
+            }}>
+            Hidden by...
+          </Table.Cell>
+          <Table.Cell>
+            Override
+          </Table.Cell>
+          <Table.Cell>
+            See on Others
+          </Table.Cell>
+          <Table.Cell>
+            Has
+          </Table.Cell>
+        </Table.Row>
+        {genitals.map((genital, index) => (
+          <Table.Row
+            className={nothas_class(genital.has_one)}
+            key={index}>
+            <Table.Cell>
+              {genital.displayname}
+            </Table.Cell>
+            <Table.Cell>
+              {genital.uparrow && (
+                genital.has_one && (
+                  <Button
+                    icon="arrow-up"
+                    onClick={() => act('PREFCMD_SHIFT_GENITAL',
+                      {
+                        'PREFDAT_GENITAL_HAS': genital.has_key,
+                        'PREFDAT_GO_PREV': true,
+                      })} />
+                ) || (
+                  <Box
+                    className="GenitalLayeringTableNothas">
+                    <Icon
+                      name="arrow-up" />
+                  </Box>
+                )
+              ) || (
+                <Box />
+              )}
+            </Table.Cell>
+            <Table.Cell>
+              {genital.downarrow && (
+                genital.has_one && (
+                  <Button
+                    icon="arrow-down"
+                    onClick={() => act('PREFCMD_SHIFT_GENITAL',
+                      {
+                        'PREFDAT_GENITAL_HAS': genital.has_key,
+                        'PREFDAT_GO_NEXT': true,
+                      })} />
+                ) || (
+                  <Box
+                    className="GenitalLayeringTableNothas">
+                    <Icon
+                      name="arrow-down" />
+                  </Box>
+                )
+              ) || (
+                <Box />
+              )}
+            </Table.Cell>
+            <Table.Cell>
+              <Button
+                content={genital.respect_clothing}
+                onClick={() => act('PREFCMD_HIDE_GENITAL',
+                  {
+                    'PREFDAT_GENITAL_HAS': genital.has_key,
+                    'PREFDAT_HIDDEN_BY': 'clothing',
+                  })} />
+            </Table.Cell>
+            <Table.Cell>
+              <Button
+                content={genital.respect_underwear}
+                onClick={() => act('PREFCMD_HIDE_GENITAL',
+                  {
+                    'PREFDAT_GENITAL_HAS': genital.has_key,
+                    'PREFDAT_HIDDEN_BY': 'underwear',
+                  })} />
+            </Table.Cell>
+            <Table.Cell>
+              <Button
+                content={genital.override_coverings}
+                onClick={() => act('PREFCMD_OVERRIDE_GENITAL',
+                  {
+                    'PREFDAT_GENITAL_HAS': genital.has_key,
+                  })} />
+            </Table.Cell>
+            <Table.Cell>
+              <Button
+                content={genital.see_on_others}
+                onClick={() => act('PREFCMD_SEE_GENITAL',
+                  {
+                    'PREFDAT_GENITAL_HAS': genital.has_key,
+                  })} />
+            </Table.Cell>
+            <Table.Cell>
+              <Button
+                onClick={() => act('PREFCMD_TOGGLE_GENITAL',
+                  {
+                    'PREFDAT_GENITAL_HAS': genital.has_key,
+                  })} >
+                {genital.has_one
+                  ? <Icon name="checkmark" />
+                  : <Icon name="times" />}
+              </Button>
+            </Table.Cell>
+          </Table.Row>
+        ))}
+      </Table>
+    </Section>
+  );
+};
+
+// This is a genital, and it lets you customize that genital! It's a set of
+// buttons that you can click to change the shape and color of the genital!
+// its a polymorphic menu that displays any part, with the right parameters
+const HasBingus = (props, context) => {
+  const { act, data } = useBackend(context);
+  const {
+    this_bingus = {}, // dis fockin bingus
+  } = props;
+  const {
+    displayname = "",
+    one_or_some = "one",
+    has_key = "has_bingus",
+    has_one = false,
+    can_see = true,
+    can_color1 = false,
+    color1 = "000000",
+    color1_key = "",
+    can_shape = false,
+    shape = "None",
+    can_size = false,
+    size = "None",
+    size_unit = "decigrundles",
+    respect_clothing = false,
+    respect_underwear = false,
+    override_coverings = "None",
+    see_on_others = true,
+  } = this_bingus;
+
+  const padwidth = "150px";
+
+  const colorblock = can_see && can_color1 ? (
+    <Stack.Item>
+      <LR_SettingNameValuePair
+        pad={padwidth}
+        name="Color"
+        no_button
+        value={
+          <ColorBox
+            color_value={color1}
+            color_index={color1_key}
+            colkey_is_feature />
+        } />
+    </Stack.Item>
+  ) : null;
+  const shapeblock = can_see && can_shape ? (
+    <Stack.Item>
+      <LR_SettingNameValuePair
+        pad={padwidth}
+        name="Shape"
+        value={shape}
+        command="PREFCMD_SHAPE_GENITAL" />
+    </Stack.Item>
+  ) : null;
+  const sizeblock = can_see && can_size ? (
+    <Stack.Item>
+      <LR_SettingNameValuePair
+        pad={padwidth}
+        name="Size"
+        value={`${size} ${size_unit}`}
+        command="PREFCMD_SIZE_GENITAL" />
+    </Stack.Item>
+  ) : null;
+  const overrideblock = can_see ? (
+    <Stack.Item>
+      <LR_SettingNameValuePair
+        pad={padwidth}
+        name="Override"
+        value={override_coverings}
+        command="PREFCMD_OVERRIDE_GENITAL" />
+    </Stack.Item>
+  ) : null;
+  const respectclothingblock = can_see ? (
+    <Stack.Item>
+      <LR_SettingNameValuePair
+        pad={padwidth}
+        name="Respect Clothing"
+        value={respect_clothing ? "Enabled" : "Disabled"}
+        command="PREFCMD_HIDE_GENITAL"
+        command_data={{ 'PREFDAT_HIDDEN_BY': 'clothing' }} />
+    </Stack.Item>
+  ) : null;
+  const respectunderwearblock = can_see ? (
+    <Stack.Item>
+      <LR_SettingNameValuePair
+        pad={padwidth}
+        name="Respect Underwear"
+        value={respect_underwear ? "Enabled" : "Disabled"}
+        command="PREFCMD_HIDE_GENITAL"
+        command_data={{ 'PREFDAT_HIDDEN_BY': 'underwear' }} />
+    </Stack.Item>
+  ) : null;
+  const seeonothersblock = can_see ? (
+    <Stack.Item>
+      <LR_SettingNameValuePair
+        pad={padwidth}
+        name="See on Others"
+        value={see_on_others ? "Enabled" : "Disabled"}
+        command="PREFCMD_SEE_GENITAL" />
+    </Stack.Item>
+  ) : null;
+
+  return (
+    <Section fill>
+      <Stack fill vertical>
+        <Stack.Item>
+          <Box
+            className="UD_SettingName">
+            {displayname}
+          </Box>
+        </Stack.Item>
+        <Stack.Item>
+          <LR_SettingNameValuePair
+            pad={padwidth}
+            name={`Got ${one_or_some}`}
+            value={
+              has_one
+                ? "Yes"
+                : "No"
+            }
+            command="PREFCMD_TOGGLE_GENITAL"
+            command_data={{ 'PREFDAT_GENITAL_HAS': has_key }} />
+        </Stack.Item>
+        {colorblock}
+        {shapeblock}
+        {sizeblock}
+        {overrideblock}
+        {respectclothingblock}
+        {respectunderwearblock}
+        {seeonothersblock}
+      </Stack>
+    </Section>
+  );
+};
+
+// This is the loadout, and its a big one! Has a few parts:
+// - The header
+// -- Number of points left, a button to reset, and the search bar
+// - The primary categories
+// - The secondary categories
+// - THe rest of the damn thing
+const Loadout = (props, context) => {
+  const { act, data } = useBackend(context);
+  const {
+    points_left = 0,
+    points_span = "",
+    search = "",
+    primary_categories = [],
+    secondary_categories = [],
+    current_category = "",
+    current_subcategory = "",
+    gear_list = [],
+  } = data;
+
+  return (
+    <Section fill>
+      <Stack fill vertical>
+        <Stack.Item> {/* Header */}
+          <Stack fill>
+            <Stack.Item shrink>
+              <Box
+                className="UD_SettingName">
+                You have
+              </Box>
+            </Stack.Item>
+            <Stack.Item shrink>
+              <Box
+                className={`UD_SettingName ${points_span}`}>
+                {points_left}
+              </Box>
+            </Stack.Item>
+            <Stack.Item shrink>
+              <Button
+                icon="undo"
+                content="Reset"
+                onClick={() => act('PREFCMD_LOADOUT_RESET')} />
+            </Stack.Item>
+            <Stack.Item grow /> {/* Spacer */}
+            <Stack.Item>
+              <Button
+                icon="times"
+                onClick={() => act('PREFCMD_LOADOUT_SEARCH_CLEAR')} />
+            </Stack.Item>
+            <Stack.Item>
+              <Input
+                placeholder="Search"
+                value={search}
+                onChange={(e, value) => act('PREFCMD_LOADOUT_SEARCH',
+                  {
+                    'PREFDAT_SEARCH': value,
+                  })} />
+            </Stack.Item>
+          </Stack>
+        </Stack.Item>
+        <Stack.Item> {/* Primary Categories */}
+          <Stack fill>
+            {primary_categories.map((category, index) => (
+              <Stack.Item key={index}>
+                <Button
+                  content={category}
+                  selected={category === current_category}
+                  onClick={() => act('PREFCMD_LOADOUT_CATEGORY',
+                    {
+                      'PREFDAT_LOADOUT_CATEGORY': category,
+                    })} />
+              </Stack.Item>
+            ))}
+          </Stack>
+        </Stack.Item>
+        <Stack.Item> {/* Secondary Categories */}
+          <Stack fill>
+            {secondary_categories.map((category, index) => (
+              <Stack.Item key={index}>
+                <Button
+                  content={category}
+                  selected={category === current_subcategory}
+                  onClick={() => act('PREFCMD_LOADOUT_SUBCATEGORY',
+                    {
+                      'PREFDAT_LOADOUT_SUBCATEGORY': category,
+                    })} />
+              </Stack.Item>
+            ))}
+          </Stack>
+        </Stack.Item>
+        <Stack.Item> {/* The unholy evil death bringer of the gear list */}
+          <Flex wrap="wrap">
+            {gear_list.map((gear, index) => (
+              <GearItem
+                key={index}
+                gear={gear} />
+            ))}
+          </Flex>
+        </Stack.Item>
+      </Stack>
+    </Section>
+  );
+};
+
+// Options and preferences, this one'll suck it.
+const Options = (props, context) => {
+  const { act, data } = useBackend(context);
+  const {
+    headder = "Cool Options",
+    options = [],
+  } = data;
+
+  // format of options:
+  // [
+  //   {
+  //     "displayname": "Squeeze huge boobs",
+  //     "displayvalue": "Only while in public",
+  //     "command": "PREFCMD_SQUEEZE_BOOBS",
+  //   }, ... boob yeah
+  // ],
+
+  return (
+    <Section fill>
+      <Flex wrap="wrap">
+        {options.map((option, index) => (
+          <Flex.Item
+            key={index}
+            basis={OPTION_WIDTH}>
+            <UD_SettingNameValuePair
+              name={option.displayname}
+              value={option.displayvalue}
+              command={option.command} />
+          </Flex.Item>
+        ))}
+      </Flex>
+    </Section>
+  );
+}; // suck it
+
+// And now, the keybindings. truly the worst of them all.
+const Keybindings = (props, context) => {
+  const { act, data } = useBackend(context);
+  const {
+    keybindings = [],
+    categories = [],
+    current_category = "",
+  } = data;
+
+  // format of keybindings:
+  // [
+  //   {
+  //     displayname: "Kneed boobs",
+  //     key1: "K",
+  //     key2: "B",
+  //     key3: "None",
+  //     default: "K",
+  //     independant_key: "Q"
+  //   }, ... boob yeah
+  // ],
+
+  return (
+    <Section fill>
+      <Stack fill vertical>
+        <Stack.Item> {/* Categories */}
+          <Stack fill>
+            {categories.map((category, index) => (
+              <Stack.Item key={index}>
+                <Button
+                  content={category}
+                  selected={category === current_category}
+                  onClick={() => act('PREFCMD_KEYBINDING_CATEGORY',
+                    {
+                      'PREFDAT_KEYBINDING_CATEGORY': category,
+                    })} />
+              </Stack.Item>
+            ))}
+          </Stack>
+        </Stack.Item>
+        <Stack.Item> {/* Keybindings */}
+          <Table>
+            <Table.Row>
+              <Table.Cell>
+                Action
+              </Table.Cell>
+              <Table.Cell>
+                Key 1
+              </Table.Cell>
+              <Table.Cell>
+                Key 2
+              </Table.Cell>
+              <Table.Cell>
+                Key 3
+              </Table.Cell>
+              <Table.Cell>
+                Default
+              </Table.Cell>
+              <Table.Cell>
+                Independant Key
+              </Table.Cell>
+            </Table.Row>
+            {keybindings.map((keybinding, index) => (
+              <Table.Row key={index}>
+                <Table.Cell>
+                  {keybinding.displayname}
+                </Table.Cell>
+                <Table.Cell
+                  className="Keybind1">
+                  <Button
+                    content={keybinding.key1}
+                    onClick={() => act('PREFCMD_KEYBINDING_CAPTURE',
+                      {
+                        'PREFDAT_KEYBINDING_ACTION': keybinding.displayname,
+                        'PREFDAT_KEYBINDING_PREV_KEY': keybinding.key1,
+                      })} />
+                </Table.Cell>
+                <Table.Cell
+                  className="Keybind2">
+                  <Button
+                    content={keybinding.key2}
+                    onClick={() => act('PREFCMD_KEYBINDING_CAPTURE',
+                      {
+                        'PREFDAT_KEYBINDING_ACTION': keybinding.displayname,
+                        'PREFDAT_KEYBINDING_PREV_KEY': keybinding.key2,
+                      })} />
+                </Table.Cell>
+                <Table.Cell
+                  className="Keybind3">
+                  <Button
+                    content={keybinding.key3}
+                    onClick={() => act('PREFCMD_KEYBINDING_CAPTURE',
+                      {
+                        'PREFDAT_KEYBINDING_ACTION': keybinding.displayname,
+                        'PREFDAT_KEYBINDING_PREV_KEY': keybinding.key3,
+                      })} />
+                </Table.Cell>
+                <Table.Cell
+                  className="KeybindDefault">
+                  {keybinding.default}
+                </Table.Cell>
+                <Table.Cell
+                  className="KeybindIndie">
+                  <Button
+                    content={keybinding.independant_key}
+                    onClick={() => act('PREFCMD_KEYBINDING_CAPTURE',
+                      {
+                        'PREFDAT_KEYBINDING_ACTION': keybinding.displayname,
+                        'PREFDAT_KEYBINDING_PREV_KEY': keybinding.independant_key,
+                      })} />
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table>
+        </Stack.Item>
+      </Stack>
+    </Section>
+  );
+};
+
+// save, load, horny chat button!
+// also has page buttons, if needed
+const SaveLoadHorny = (props, context) => {
+  const { act, data } = useBackend(context);
+  const {
+    pages = 1,
+    current_page = 1,
+    page_command = "PREFCMD_PAGE",
+  } = data;
+
+  return (
+    <Section fill>
+      <Stack fill vertical>
+        {pages > 1 && (
+          <Stack.Item>
+            <Stack fill>
+              <Stack.Item>
+                <Button
+                  disabled={current_page <= 1}
+                  icon="arrow-left"
+                  onClick={() => act(page_command,
+                    {
+                      'PREFDAT_GO_PREV': true,
+                    })} />
+              </Stack.Item>
+              <Stack.Item>
+                <Button
+                  disabled={current_page >= pages}
+                  icon="arrow-right"
+                  onClick={() => act(page_command,
+                    {
+                      'PREFDAT_GO_NEXT': true,
+                    })} />
+              </Stack.Item>
+            </Stack>
+          </Stack.Item>
+        ) || null}
+        <Stack.Item>
+          <Button
+            icon="cog"
+            content="Configure VisualChat"
+            onClick={() => act('PREFCMD_VCHAT')} />
+        </Stack.Item>
+        <Stack.Item>
+          <Button
+            icon="save"
+            content="Save"
+            onClick={() => act('PREFCMD_SAVE')} />
+        </Stack.Item>
+        <Stack.Item>
+          <Stack fill>
+            <Stack.Item>
+              <Button
+                content="Undo"
+                icon="undo"
+                onClick={() => act('PREFCMD_UNDO')} />
+            </Stack.Item>
+            <Stack.Item>
+              <Button
+                content="Delete"
+                icon="trash"
+                onClick={() => act('PREFCMD_DELETE')} />
+            </Stack.Item>
+          </Stack>
+        </Stack.Item>
+      </Stack>
+    </Section>
+  );
+};
+
+// the character preview! augh how does this work
+const CharacterPreview = (props, context) => {
+  const { act, data } = useBackend(context);
+
+  return (
+    <Section fill>
+      <ByondUi
+        id="character_preview_map"
+        type="map"
+        width="100%"
+        height="100%" />
+    </Section>
+  );
+};
+
+// This is a gear item! It has a few parts:
+// - The name of the gear
+// -- will have a cool diagonal slash if you can't afford it
+// -- Will be selected if you gots it
+// -- Will have a cool icon if the name has been edited!
+// - The cost of the gear
+// -- Will be red if you can't afford it, and have a cool diagonal slash
+// - The description of the gear
+// -- will have a cool icon if the desc has been edited!
+// if you have it:
+// - Button to change its name, button to change its desc, button to color it
+// if you don't have it:
+// - none of those
+const GearItem = (props, context) => {
+  const { act, data } = useBackend(context);
+  const {
+    gear = {},
+  } = props;
+  const {
+    displayname = "",
+    gear_path = "",
+    cost = 0,
+    description = "",
+    has = false,
+    can_afford = false,
+    renamed = false,
+    redesc = false,
+    color = "000000",
+  } = gear;
+
+  const costcolor = can_afford ? DEF_TEXT_COLOR : "red";
+  const costclass = can_afford ? "SettingValue" : "SettingValue GearItemCannotAfford";
+  const nameclassA = has ? "SettingValueSelected" : "SettingValueDeselected";
+  const nameclassB = can_afford ? "" : "GearItemCannotAfford";
+  const nameclass = `${nameclassA} ${nameclassB}`;
+  const descclassA = redesc ? "SettingValueEdited" : "SettingValue";
+  const descclassB = has ? "SettingValueSelected" : "SettingValueDeselected";
+  const descclass = `${descclassA} ${descclassB}`;
+
+  return (
+    <Flex.Item
+      basis={GEAR_ITEM_WIDTH}>
+      <Stack fill vertical>
+        <Stack.Item> {/* Name and Price */}
+          <Stack fill>
+            <Stack.Item grow>
+              <Box
+                className={nameclass}>
+                {displayname}
+              </Box>
+            </Stack.Item>
+            <Stack.Item shrink>
+              <Box
+                className={costclass}
+                color={costcolor}>
+                {cost}
+              </Box>
+            </Stack.Item>
+          </Stack>
+        </Stack.Item>
+        <Stack.Item> {/* Description */}
+          <Box
+            className={descclass}>
+            {description}
+          </Box>
+        </Stack.Item>
+        {has && (
+          <Stack.Item> {/* Buttons */}
+            <Stack fill>
+              <Stack.Item>
+                <Button
+                  icon="edit"
+                  content="Change Name"
+                  onClick={() => act('PREFCMD_LOADOUT_RENAME',
+                    {
+                      'PREFDAT_GEAR_TYPE': gear_path,
+                    })} />
+              </Stack.Item>
+              <Stack.Item>
+                <Button
+                  icon="edit"
+                  content="Change Desc"
+                  onClick={() => act('PREFCMD_LOADOUT_REDESC',
+                    {
+                      'PREFDAT_GEAR_TYPE': gear_path,
+                    })} />
+              </Stack.Item>
+              <Stack.Item>
+                <ColorBox
+                  color_value={color}
+                  gear_index={gear_path} />
+              </Stack.Item>
+            </Stack>
+          </Stack.Item>
+        ) || null}
+      </Stack>
+    </Flex.Item>
+  );
+};
+
+// This is underwear! It's a set of buttons that you can click to change the
+// style and color of the underwear! It's buttons!
+const LovelyUndie = (props, context) => {
+  const { act, data } = useBackend(context);
+  const {
+    undie = {},
+  } = props;
+  const {
+    displayname = "",
+    style = "None",
+    color1 = "000000",
+    color1_key = "",
+    overclothes = "No",
+    undie_command = "PREFCMD_UNDERWEAR",
+    over_command = "PREFCMD_UNDERWEAR_OVERCLOTHES",
+  } = undie;
+
+  return (
+    <Stack fill vertical>
+      <Stack.Item> {/* Entry Name */}
+        <Box
+          className="UD_SettingName">
+          {displayname}
+        </Box>
+      </Stack.Item>
+      <Stack.Item> {/* Style and overclothes */}
+        <Stack fill>
+          <Stack.Item grow>
+            <PrevNextSetting
+              current={style}
+              command={command} />
+          </Stack.Item>
+          <Stack.Item shrink>
+            <LR_SettingNameValuePair
+              name="Over:"
+              value={undie_command}
+              command={over_command} />
+          </Stack.Item>
+        </Stack>
+      </Stack.Item>
+      <Stack.Item> {/* Color */}
+        <ColorBox
+          color_value={color1}
+          color_index={color1_key}
+          colkey_is_var />
+      </Stack.Item>
+    </Stack>
+  );
+};
+
+
 // This is a marking! It's a set of buttons that you can click to change the
 // shape and color of the marking! Also has buttons to move it up or down the
 // list, and to remove it! It's buttons!
@@ -1266,52 +2049,93 @@ const CuteMarking = (props, context) => {
     displayname = "",
     location_display = "",
     color1 = "000000",
-    color1_key = "",
+    color1_index = 1,
     color2 = "000000",
-    color2_key = "",
+    color2_index = 2,
     color2_show = false,
     color3 = "000000",
-    color3_key = "",
+    color3_index = 3,
     color3_show = false,
+    marking_uid = "weewee",
   } = marking;
 
   return (
-    <Stack fill>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    <Stack fill vertical>
+      <Stack.Item> {/* buttons, loc, and more buttons, name */}
+        <Stack fill>
+          <Stack.Item shrink>
+            <Button
+              icon="trash"
+              onClick={() => act('PREFCMD_MARKING_REMOVE',
+                { 'PREFDAT_MARKING_UID': marking_uid })} />
+          </Stack.Item>
+          <Stack.Item shrink>
+            <Button
+              icon="arrow-up"
+              onClick={() => act('PREFCMD_MARKING_MOVE_UP',
+                { 'PREFDAT_MARKING_UID': marking_uid })} />
+          </Stack.Item>
+          <Stack.Item shrink>
+            <Button
+              icon="arrow-down"
+              onClick={() => act('PREFCMD_MARKING_MOVE_DOWN',
+                { 'PREFDAT_MARKING_UID': marking_uid })} />
+          </Stack.Item>
+          <Stack.Item basis="150px">
+            <Box
+              className="UD_SettingName">
+              {location_display}
+            </Box>
+          </Stack.Item>
+          <Stack.Item shrink>
+            <Button
+              icon="arrow-left"
+              onClick={() => act('PREFCMD_MARKING_PREV',
+                { 'PREFDAT_MARKING_UID': marking_uid })} />
+          </Stack.Item>
+          <Stack.Item shrink>
+            <Button
+              icon="arrow-right"
+              onClick={() => act('PREFCMD_MARKING_NEXT',
+                { 'PREFDAT_MARKING_UID': marking_uid })} />
+          </Stack.Item>
+          <Stack.Item grow>
+            <Button
+              content={displayname}
+              onClick={() => act('PREFCMD_MARKING_EDIT',
+                { 'PREFDAT_MARKING_UID': marking_uid })} />
+          </Stack.Item>
+        </Stack>
+      </Stack.Item>
+      <Stack.Item> {/* colors! */}
+        <Stack fill>
+          <Stack.Item basis="33%">
+            <ColorBox
+              color_value={color1}
+              color_index={color1_key}
+              marking_index={marking_uid} />
+          </Stack.Item>
+          {color2_show && (
+            <Stack.Item basis="33%">
+              <ColorBox
+                color_value={color2}
+                color_index={color2_key}
+                marking_index={marking_uid} />
+            </Stack.Item>
+          ) || null}
+          {color3_show && (
+            <Stack.Item basis="33%">
+              <ColorBox
+                color_value={color3}
+                color_index={color3_key}
+                marking_index={marking_uid} />
+            </Stack.Item>
+          ) || null}
+        </Stack>
+      </Stack.Item>
+    </Stack>
+  );
+};
 
 // This is a part, something like ears or a tail! Its a set of buttons that
 // you can click to change the shape and color of the part! It's buttons!
@@ -1396,6 +2220,7 @@ const ModdedLimb = (props, context) => {
           icon="trash"
           onClick={() => act('PREFCMD_REMOVE_LIMB',
             { 'PREFDAT_REMOVE_LIMB_MOD': area })} />
+      </Stack.Item>
       <Stack.Item>
         <UD_SettingNameValuePair
           name={`${pros_or_amp} ${area}`}
@@ -1406,35 +2231,6 @@ const ModdedLimb = (props, context) => {
     </Stack>
   );
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // This is a setting that has a previous and next button!
 const PrevNextSetting = (props, context) => {
@@ -1478,11 +2274,12 @@ const LR_SettingNameValuePair = (props, context) => {
     command = "",
     command_data = {},
     no_button = false,
+    pad = LR_SettingNameWidth,
   } = props;
 
   return (
     <Stack fill>
-      <Stack.Item basis={LR_SettingNameWidth}> {/* Name */}
+      <Stack.Item basis={pad}> {/* Name */}
         <Box className="LR_SettingName">
           {name}
         </Box>
@@ -1612,6 +2409,75 @@ const ColorBox = (props, context) => {
 };
 
 
+// The style block! I dont know how to use sass, but I do know how to do this!
+// defines a <style> block that contains all the styles for the preferences
+// menu, so that it can be styled easily from ingame
+const StyleBlock = (props, context) => {
+  return (
+    <style>
+      {`
+        .UD_SettingName {
+          font-size: 16px;
+          font-weight: bold;
+          padding: 5px;
+          background: #222;
+          color: #FFF;
+        }
+        .UD_SettingValueInfo {
+          font-size: 16px;
+          padding: 5px;
+          background: #333;
+          color: #FFF;
+        }
+        .UD_SettingValueButton {
+          font-size: 16px;
+          padding: 5px;
+          background: #444;
+          color: #FFF;
+        }
+        .LR_SettingName {
+          font-size: 16px;
+          font-weight: bold;
+          padding: 5px;
+          background: #222;
+          color: #FFF;
+        }
+        .LR_SettingValueInfo {
+          font-size: 16px;
+          padding: 5px;
+          background: #333;
+          color: #FFF;
+        }
+        .LR_SettingValueButton {
+          font-size: 16px;
+          padding: 5px;
+          background: #444;
+          color: #FFF;
+        }
+        .ColorBox {
+          font-size: 16px;
+          padding: 5px;
+          background: #FFF;
+          color: #000;
+          border: 1px solid #000;
+          text-align: center;
+        }
+        .GenitalLayeringTable {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        .GenitalLayeringTableHeader {
+          background: #222;
+          color: #FFF;
+        }
+        .GenitalLayeringTableNothas {
+          background: #444;
+          color: #FFF;
+        }
+      `}
+    </style>
+  );
+};
 
 
 

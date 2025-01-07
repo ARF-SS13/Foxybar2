@@ -26,6 +26,7 @@
 	var/size_max
 	var/size_name
 	var/size_units
+	var/one_or_some
 
 /datum/genital_data/New(obj/item/organ/genital/nad)
 	shapelist = nad.GetShapeList()
@@ -45,6 +46,9 @@
 	name = nad.name
 	genital_flags = nad.genital_flags
 	size_units = nad.size_units
+	one_or_some = nad.one_or_some
+	if(!pref_cat_2_words[has_key])
+		pref_cat_2_words[has_key] = "[name]"
 
 /datum/genital_data/proc/SizeString(size)
 	var/out = size_name
@@ -56,6 +60,20 @@
 		out = replacetext(out, "<S>", "")
 		out = replacetext(out, "<ES>", "")
 	return out
+
+/datum/genital_data/proc/CanHave()
+	if(!has_key)
+		return FALSE
+	if(!(genital_flags & GENITAL_CAN_HAVE))
+		return FALSE
+	return TRUE
+
+/datum/genital_data/proc/CanLayer()
+	if(!CanHave())
+		return FALSE
+	if(!(genital_flags & GENITAL_INTERNAL))
+		return FALSE
+	return TRUE
 
 
 

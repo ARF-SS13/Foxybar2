@@ -21,6 +21,17 @@
 		if(C)
 			C.clear_character_previews()
 
+/datum/preferences/ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
+	. = ..()
+	var/mob/user = parent.client
+	if(lockdown)
+		return
+	var/list/hreflist = list()
+	hreflist["preference"] = action
+	hreflist |= params
+	if(user)
+		process_link(user, hreflist)
+
 /datum/preferences/proc/process_link(mob/user, list/href_list)
 	if(lockdown)
 		return

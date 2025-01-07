@@ -464,66 +464,63 @@ GLOBAL_LIST_INIT(undie_position_strings, list("Under Clothes", "Over Clothes", "
 	#define PPT_GAME_PREFERENCES_CONTENT                          "PPT_GAME_PREFERENCES_CONTENT"
 #define PPT_KEYBINDINGS                                       "PPT_KEYBINDINGS"
 
-GLOBAL_LIST_INIT(prefs_menu_layout, list(
-	PPT_CHARCTER_PROPERTIES = list(
-		PPT_CHARCTER_PROPERTIES_INFO = list(),
-		PPT_CHARCTER_PROPERTIES_VOICE = list(),
-		PPT_CHARCTER_PROPERTIES_MISC = list(),
-	),
-	PPT_CHARCTER_APPEARANCE = list(
-		PPT_CHARCTER_APPEARANCE_MISC = list(),
-		PPT_CHARCTER_APPEARANCE_HAIR_EYES = list(),
-		PPT_CHARCTER_APPEARANCE_PARTS = list(),
-		PPT_CHARCTER_APPEARANCE_MARKINGS = list(),
-		PPT_CHARCTER_APPEARANCE_UNDERLYING = list(
-			PPT_CHARCTER_APPEARANCE_UNDERLYING_UNDIES,
-			PPT_CHARCTER_APPEARANCE_UNDERLYING_LAYERING,
-			"READ_GENITALS",
-		)
-	),
-	PPT_LOADOUT = list(),
-	PPT_GAME_PREFERENCES = list(
-		PPT_GAME_PREFERENCES_GENERAL = list(),
-		PPT_GAME_PREFERENCES_UI = list(),
-		PPT_GAME_PREFERENCES_CHAT = list(),
-		PPT_GAME_PREFERENCES_RUNECHAT = list(),
-		PPT_GAME_PREFERENCES_GHOST = list(),
-		PPT_GAME_PREFERENCES_AUDIO = list(),
-		PPT_GAME_PREFERENCES_ADMIN = list(),
-		PPT_GAME_PREFERENCES_CONTENT = list(),
-	),
-	PPT_KEYBINDINGS = list(),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GLOBAL_LIST_INIT(pref_cat_2_words, list(
+	PPT_CHARCTER_PROPERTIES                      = "Character Properties",
+	PPT_CHARCTER_PROPERTIES_INFO                 = "Info",
+	PPT_CHARCTER_PROPERTIES_VOICE                = "Voice",
+	PPT_CHARCTER_PROPERTIES_MISC                 = "Misc",
+	PPT_CHARCTER_APPEARANCE                      = "Character Appearance",
+	PPT_CHARCTER_APPEARANCE_MISC                 = "General",
+	PPT_CHARCTER_APPEARANCE_HAIR_EYES            = "Hair / Eyes",
+	PPT_CHARCTER_APPEARANCE_PARTS                = "Cool Parts",
+	PPT_CHARCTER_APPEARANCE_MARKINGS             = "Markings",
+	PPT_CHARCTER_APPEARANCE_UNDERLYING           = "Unmentionables",
+	PPT_CHARCTER_APPEARANCE_UNDERLYING_UNDIES    = "Underwear",
+	PPT_CHARCTER_APPEARANCE_UNDERLYING_LAYERING  = "Layering",
+	PPT_LOADOUT                                  = "Loadout",
+	PPT_GAME_PREFERENCES                         = "Game Preferences",
+	PPT_GAME_PREFERENCES_GENERAL                 = "General",
+	PPT_GAME_PREFERENCES_UI                      = "UI",
+	PPT_GAME_PREFERENCES_CHAT                    = "Chat",
+	PPT_GAME_PREFERENCES_RUNECHAT                = "Runechat",
+	PPT_GAME_PREFERENCES_GHOST                   = "GhostADMINONLY",
+	PPT_GAME_PREFERENCES_AUDIO                   = "Audio",
+	PPT_GAME_PREFERENCES_ADMIN                   = "AdminADMINONLY",
+	PPT_GAME_PREFERENCES_CONTENT                 = "Adult Content",
+	PPT_KEYBINDINGS                              = "Keybindings",
 ))
 
-GLOBAL_LIST_INIT(prefs_menu_layout_non_admin, list(
-	PPT_CHARCTER_PROPERTIES = list(
-		PPT_CHARCTER_PROPERTIES_INFO = list(),
-		PPT_CHARCTER_PROPERTIES_VOICE = list(),
-		PPT_CHARCTER_PROPERTIES_MISC = list(),
-	),
-	PPT_CHARCTER_APPEARANCE = list(
-		PPT_CHARCTER_APPEARANCE_MISC = list(),
-		PPT_CHARCTER_APPEARANCE_HAIR_EYES = list(),
-		PPT_CHARCTER_APPEARANCE_PARTS = list(),
-		PPT_CHARCTER_APPEARANCE_MARKINGS = list(),
-		PPT_CHARCTER_APPEARANCE_UNDERLYING = list(
-			PPT_CHARCTER_APPEARANCE_UNDERLYING_UNDIES,
-			PPT_CHARCTER_APPEARANCE_UNDERLYING_LAYERING,
-			"READ_GENITALS",
-		)
-	),
-	PPT_LOADOUT = list(),
-	PPT_GAME_PREFERENCES = list(
-		PPT_GAME_PREFERENCES_GENERAL = list(),
-		PPT_GAME_PREFERENCES_UI = list(),
-		PPT_GAME_PREFERENCES_CHAT = list(),
-		PPT_GAME_PREFERENCES_RUNECHAT = list(),
-		// PPT_GAME_PREFERENCES_GHOST = list(),
-		PPT_GAME_PREFERENCES_AUDIO = list(),
-		// PPT_GAME_PREFERENCES_ADMIN = list(),
-		PPT_GAME_PREFERENCES_CONTENT = list(),
-	),
-	PPT_KEYBINDINGS = list(),
-))
+
+
 
 
