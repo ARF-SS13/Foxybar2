@@ -10,6 +10,8 @@
 /// Adds an instanced keybinding to the global tracker
 /proc/add_keybinding(datum/keybinding/instance)
 	GLOB.keybindings_by_name[instance.name] = instance
+	LAZYINITLIST(GLOB.keybindings_by_category[instance.category])
+	GLOB.keybindings_by_category[instance.category][instance.name] = instance
 
 	// Classic
 	if(LAZYLEN(instance.classic_keys))

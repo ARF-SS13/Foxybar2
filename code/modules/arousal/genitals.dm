@@ -1,15 +1,24 @@
+GLOBAL_LIST_EMPTY(genital_data_system)
 /obj/item/organ/genital
 	color = "#fcccb3"
 	w_class = WEIGHT_CLASS_SMALL
 	organ_flags = ORGAN_NO_DISMEMBERMENT|ORGAN_EDIBLE
 	var/pornhud_slot = PHUD_NONE
 	var/associated_has = CS_MISC // for cockstring stuff
+	var/shape_key
+	var/size_key
+	var/color_key
+	var/vis_flags_key
+	var/override_key
+	var/size_units = "Vix"
+	var/one_or_some = "one"
+	/// What flag is this associated with?
+	var/hide_flag = HIDE_MISC
+	var/pickable = FALSE // deprecated
 	var/shape
 	var/sensitivity = 1 // wow if this were ever used that'd be cool but it's not but i'm keeping it for my unshit code
 	var/genital_flags //see citadel_defines.dm
 	var/genital_visflags
-	/// What flag is this associated with?
-	var/hide_flag = HIDE_MISC
 	var/masturbation_verb = "masturbate"
 	var/orgasm_verb = "cumming" //present continous
 	var/arousal_verb = "I feel aroused"
@@ -30,6 +39,7 @@
 	var/layer_index = GENITAL_LAYER_INDEX //Order should be very important. FIRST vagina, THEN testicles, THEN penis, as this affects the order they are rendered in.
 
 /obj/item/organ/genital/Initialize(mapload, do_update = TRUE)
+	register_genital()
 	. = ..()
 	if(do_update)
 		update()
@@ -39,6 +49,11 @@
 		linked_organ.linked_organ = null
 	linked_organ = null
 	. = ..()
+
+/obj/item/organ/genital/proc/register_genital()
+	if(GLOB.genital_data_system["[associated_has]"])
+		return // already registered!
+	GLOB.genital_data_system["[associated_has]"] = new /datum/genital_data(src)
 
 /obj/item/organ/genital/proc/format_for_tgui()
 	return
@@ -485,6 +500,24 @@
 	G.Insert(src)
 	return G
 
+/obj/item/organ/genital/proc/GetShapeList()
+	return list()
+
+/obj/item/organ/genital/proc/GetSizeList()
+	return null
+
+/obj/item/organ/genital/proc/GetMinSize()
+	return
+
+/obj/item/organ/genital/proc/GetMaxSize()
+	return
+
+/obj/item/organ/genital/proc/CanTaur()
+	return
+
+/obj/item/organ/genital/proc/GetSizeKind()
+	return
+
 /// Called when the giblet is first stuffed into the mob
 /obj/item/organ/genital/proc/get_features(mob/living/carbon/human/H, update = TRUE)
 	return
@@ -560,7 +593,7 @@ GLOBAL_LIST_INIT(genital_layers, list(
 	//okay cool, compile a list of genitals that are visible
 	var/list/genitals_to_add[GENITAL_LAYER_INDEX_LENGTH]
 	var/has_nads = FALSE
-	var/list/nad_order = splittext(dna?.features["genital_order"], ":") // NOT reversed cus the reversal is only for UI shit
+	var/list/nad_order = dna?.features["genital_order"] // NOT reversed cus the reversal is only for UI shit
 	for(var/obj/item/organ/genital/geni in internal_organs)
 		if(geni.is_exposed()) //Checks appropriate clothing slot and if it's through_clothes
 			genitals_to_add[clamp(nad_order.Find(geni.associated_has), 1, GENITAL_LAYER_INDEX_LENGTH)] = geni

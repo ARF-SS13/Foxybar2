@@ -15,7 +15,7 @@
 		SEND_SIGNAL(A, COMSIG_HUMAN_UPDATE_GENITALS)
 		SEND_SIGNAL(M, COMSIG_HUMAN_UPDATE_GENITALS)
 	var/mob/living/carbon/human/owner = A
-	var/list/order = splittext(owner?.dna?.features["genital_order"], ":")
+	var/list/order = owner?.dna?.features["genital_order"]
 	var/list/true_order = getApprovedGenitalList(M, order)
 	for(var/i in hud_icons)
 		if(A.hud_list[i])

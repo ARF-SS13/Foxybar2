@@ -8,7 +8,7 @@
 	masturbation_verb = "stroke"
 	arousal_verb = "I pop a boner"
 	unarousal_verb = "My boner goes down"
-	genital_flags = CAN_MASTURBATE_WITH|GENITAL_CAN_AROUSE|UPDATE_OWNER_APPEARANCE|GENITAL_CAN_TAUR|GENITAL_CAN_RECOLOR|GENITAL_CAN_RESIZE|GENITAL_CAN_RESHAPE
+	genital_flags = DEF_PENIS_FLAGS
 	linked_organ_slot = ORGAN_SLOT_TESTICLES
 	fluid_transfer_factor = 0.5
 	shape = DEF_COCK_SHAPE
@@ -22,6 +22,13 @@
 	associated_has = CS_PENIS // for cockstring stuff
 	hide_flag = HIDE_PENIS // for hideflag stuff
 	pornhud_slot = PHUD_TALLYWHACKER
+	shape_key = "cock_shape"
+	size_key = "cock_size"
+	color_key = "cock_color"
+	vis_flags_key = "cock_visibility_flags"
+	override_key = "cock_visibility_override"
+	size_units = "Inches"
+	pickable = TRUE
 
 /obj/item/organ/genital/penis/format_for_tgui()
 	var/list/out = list()
@@ -124,8 +131,8 @@
 	return "[size] inch[size!=1?"es":""]"
 
 /obj/item/organ/genital/penis/resize_genital(mob/user)
-	var/min_size = CONFIG_GET(number/penis_min_inches_prefs)
-	var/max_size = CONFIG_GET(number/penis_max_inches_prefs)
+	var/min_size = GetMinSize()
+	var/max_size = GetMaxSize()
 	var/new_length = input(user, "Penis length in inches:\n([min_size]-[max_size])", "Character Preference") as num|null
 	if(new_length)
 		set_size(clamp(round(new_length), min_size, max_size))
@@ -153,6 +160,22 @@
 /// Returns its respective sprite accessory from the global list (full of init'd types, hopefully)
 /obj/item/organ/genital/penis/get_sprite_accessory()
 	return GLOB.cock_shapes_list[shape]
+
+/// Returns its respective sprite accessory from the global list (full of init'd types, hopefully)
+/obj/item/organ/genital/penis/GetShapeList()
+	return GLOB.cock_shapes_list
+
+/obj/item/organ/genital/penis/GetMinSize()
+	return COCK_SIZE_MIN
+
+/obj/item/organ/genital/penis/GetMaxSize()
+	return COCK_SIZE_MAX
+
+/obj/item/organ/genital/penis/GetSizeKind()
+	return "<SIZE> inch<ES>"
+
+/obj/item/organ/genital/penis/CanTaur()
+	return TRUE
 
 /obj/item/organ/genital/penis/get_layer_number(position)
 	switch(position)

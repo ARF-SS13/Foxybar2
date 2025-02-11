@@ -44,11 +44,18 @@ GLOBAL_LIST_INIT(butt_descriptors, list(
 	var/size_name = "nonexistent"
 	layer_index = BUTT_LAYER_INDEX
 	shape = DEF_BUTT_SHAPE // unused
-	genital_flags = UPDATE_OWNER_APPEARANCE|GENITAL_CAN_RECOLOR|GENITAL_CAN_RESIZE
+	genital_flags = DEF_BUTT_FLAGS
 	masturbation_verb = "massage"
 	associated_has = CS_BUTT // for cockstring stuff
 	hide_flag = HIDE_BUTT // for hideflag stuff
 	pornhud_slot = PHUD_BUTT
+	shape_key = "butt_shape"
+	size_key = "butt_size"
+	color_key = "butt_color"
+	vis_flags_key = "butt_visibility_flags"
+	override_key = "butt_visibility_override"
+	size_units = "XL"
+	pickable = TRUE
 
 /obj/item/organ/genital/butt/format_for_tgui()
 	var/list/out = list()
@@ -162,6 +169,18 @@ GLOBAL_LIST_INIT(butt_descriptors, list(
 /// Returns its respective sprite accessory from the global list (full of init'd types, hopefully)
 /obj/item/organ/genital/butt/get_sprite_accessory()
 	return GLOB.butt_shapes_list[shape]
+
+/obj/item/organ/genital/butt/GetShapeList()
+	return GLOB.butt_shapes_list
+
+/obj/item/organ/genital/butt/GetMinSize()
+	return BUTT_SIZE_MIN
+
+/obj/item/organ/genital/butt/GetMaxSize()
+	return BUTT_SIZE_MAX
+
+/obj/item/organ/genital/butt/GetSizeKind()
+	return "<SIZE>XL"
 
 /obj/item/organ/genital/butt/get_layer_number(position)
 	switch(position)

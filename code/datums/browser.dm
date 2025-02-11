@@ -64,6 +64,7 @@
 /datum/browser/proc/get_header()
 	var/file
 	head_content += "<link rel='stylesheet' type='text/css' href='[common_asset.get_url_mappings()["common.css"]]'>"
+	head_content += "<link rel='stylesheet' type='text/css' href='[common_asset.get_url_mappings()["cool.css"]]'>"
 	for (file in stylesheets)
 		head_content += "<link rel='stylesheet' type='text/css' href='[SSassets.transport.get_asset_url(file)]'>"
 
@@ -81,7 +82,7 @@
 	<body scroll=auto>
 		<div class='uiWrapper'>
 			[title ? "<div class='uiTitleWrapper'><div class='uiTitle'><tt>[title]</tt></div></div>" : ""]
-			<div class='uiContent'>
+			<div class='AAAuiContent'>
 	"}
 //" This is here because else the rest of the file looks like a string in notepad++.
 /datum/browser/proc/get_footer()
@@ -114,7 +115,8 @@
 		SSassets.transport.send_assets(user, stylesheets)
 	if(scripts.len)
 		SSassets.transport.send_assets(user, scripts)
-	user << browse(get_content(), "window=[window_id];[window_size][window_options]")
+	var/thecontent = get_content()
+	user << browse(thecontent, "window=[window_id];[window_size][window_options]")
 	if(use_onclose)
 		setup_onclose()
 

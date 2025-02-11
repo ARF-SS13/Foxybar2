@@ -5,9 +5,15 @@
 	icon_state = "womb"
 	zone = BODY_ZONE_PRECISE_GROIN
 	slot = ORGAN_SLOT_WOMB
-	genital_flags = GENITAL_INTERNAL|GENITAL_FLUID_PRODUCTION
+	genital_flags = DEF_WOMB_FLAGS
 	fluid_id = /datum/reagent/consumable/semen/femcum
 	linked_organ_slot = ORGAN_SLOT_VAGINA
+	shape_key = "womb_shape"
+	size_key = "womb_size"
+	color_key = "womb_color"
+	vis_flags_key = "womb_visibility_flags"
+	override_key = "womb_visibility_override"
+	pickable = TRUE
 
 /obj/item/organ/genital/womb/format_for_tgui()
 	var/list/out = list()

@@ -413,6 +413,79 @@ GLOBAL_LIST_INIT(unlocked_mutant_parts, list("horns", "insect_fluff"))
 //parts in either of the above two lists that require a second option that allows them to be coloured
 GLOBAL_LIST_INIT(colored_mutant_parts, list("insect_wings" = "wings_color", "deco_wings" = "wings_color", "horns" = "horns_color"))
 
+/// These are features that are colors (otherwise, they're vars, because THANKS DNA)
+GLOBAL_LIST_INIT(features_that_are_colors, list(
+	"derg_body_primary"            = TRUE,
+	"derg_body_secondary"          = TRUE,
+	"derg_body_tertiary"           = TRUE,
+	"derg_belly_primary"           = TRUE,
+	"derg_belly_secondary"         = TRUE,
+	"derg_belly_tertiary"          = TRUE,
+	"derg_horns_primary"           = TRUE,
+	"derg_horns_secondary"         = TRUE,
+	"derg_horns_tertiary"          = TRUE,
+	"derg_ears_primary"            = TRUE,
+	"derg_ears_secondary"          = TRUE,
+	"derg_ears_tertiary"           = TRUE,
+	"derg_mane_primary"            = TRUE,
+	"derg_mane_secondary"          = TRUE,
+	"derg_mane_tertiary"           = TRUE,
+	"derg_eyes_primary"            = TRUE,
+	"derg_eyes_secondary"          = TRUE,
+	"derg_eyes_tertiary"           = TRUE,
+	"xenodorsal_primary"           = TRUE,
+	"xenodorsal_secondary"         = TRUE,
+	"xenodorsal_tertiary"          = TRUE,
+	"xhead_primary"                = TRUE,
+	"xhead_secondary"              = TRUE,
+	"xhead_tertiary"               = TRUE,
+	"tail_primary"                 = TRUE,
+	"tail_secondary"               = TRUE,
+	"tail_tertiary"                = TRUE,
+	"insect_markings_primary"      = TRUE,
+	"insect_markings_secondary"    = TRUE,
+	"insect_markings_tertiary"     = TRUE,
+	"insect_fluff_primary"         = TRUE,
+	"insect_fluff_secondary"       = TRUE,
+	"insect_fluff_tertiary"        = TRUE,
+	"ears_primary"                 = TRUE,
+	"ears_secondary"               = TRUE,
+	"ears_tertiary"                = TRUE,
+	"frills_primary"               = TRUE,
+	"frills_secondary"             = TRUE,
+	"frills_tertiary"              = TRUE,
+	"ipc_antenna_primary"          = TRUE,
+	"ipc_antenna_secondary"        = TRUE,
+	"ipc_antenna_tertiary"         = TRUE,
+	"taur_primary"                 = TRUE,
+	"taur_secondary"               = TRUE,
+	"taur_tertiary"                = TRUE,
+	"snout_primary"                = TRUE,
+	"snout_secondary"              = TRUE,
+	"snout_tertiary"               = TRUE,
+	"spines_primary"               = TRUE,
+	"spines_secondary"             = TRUE,
+	"spines_tertiary"              = TRUE,
+	"mam_body_markings_primary"    = TRUE,
+	"mam_body_markings_secondary"  = TRUE,
+	"mam_body_markings_tertiary"   = TRUE,
+	"mcolor"                       = TRUE,
+	"mcolor2"                      = TRUE,
+	"mcolor3"                      = TRUE,
+	"horns_color"                  = TRUE,
+	"wings_color"                  = TRUE,
+	"cock_color"                   = TRUE,
+	"balls_color"                  = TRUE,
+	"breasts_color"                = TRUE,
+	"butt_color"                   = TRUE,
+	"belly_color"                  = TRUE,
+	"vag_color"                    = TRUE,
+	"blood_color"                  = TRUE,
+	"chat_color"                   = TRUE,
+))
+
+
+
 //body ids that have greyscale sprites
 GLOBAL_LIST_INIT(greyscale_limb_types, list(
 	"human",
@@ -487,3 +560,44 @@ GLOBAL_LIST_INIT(eye_types, list(
 GLOBAL_LIST_INIT(bodypart_names, list(num2text(HEAD) = "Head", num2text(CHEST) = "Chest", num2text(LEG_LEFT) = "Left Leg", num2text(LEG_RIGHT) = "Right Leg", num2text(ARM_LEFT) = "Left Arm", num2text(ARM_RIGHT) = "Right Arm"))
 // list linking bodypart names back to the bitflags
 GLOBAL_LIST_INIT(bodypart_values, list("Head" = num2text(HEAD), "Chest" = num2text(CHEST), "Left Leg" = num2text(LEG_LEFT), "Right Leg" = num2text(LEG_RIGHT), "Left Arm" = num2text(ARM_LEFT), "Right Arm" = num2text(ARM_RIGHT)))
+
+
+#define MARKING_LIMB_INDEX_NUM  1
+#define MARKING_NAME            2
+#define MARKING_COLOR_LIST      3
+#define MARKING_UID             4
+#define MARKING_LIST_LENGTH     4
+
+#define MARKING_COLOR_LIST_LENGTH 3
+
+// Globals/helpers/randomness.
+GLOBAL_LIST_INIT(hair_gradients, list(
+	"None" = "none",
+	"Fade (Up)" = "fadeup",
+	"Fade (Down)" = "fadedown",
+	"Fade Low (Up)" = "fadeup_low",
+	"Bottom Flat" = "bottomflat",
+	"Fade Low (Down)" = "fadedown_low",
+	"Vertical Split" = "vsplit",
+	"Reflected" = "reflected",
+	"Reflected (Inverted)" = "reflected_inverse",
+	"Reflected High" = "reflected_high",
+	"Reflected High (Inverted)" = "reflected_inverse_high",
+	"Wavy" = "wavy",
+	"Striped" = "striped",
+	"Reversed Stripe" = "stripedreverse",
+	"Squigly" = "squigly",
+	"Swayed" = "sinewave",
+	"Vertical Swayed" = "sinewavesideways",
+	"Mixy" = "dots",
+	"Mixy Faded Down" = "fadedowndots",
+	"Spots" = "skrell_gradient_spots",
+	"Stripey" = "skr_headtail_stripes", //My beloved
+	"Horizontal Fading Stripes" = "stripeshorzfade",
+	"Horizontal Stripes" = "stripeshorz",
+	"Vertical Fading Stripes" = "stripesvertfaded",
+	"Vertical Stripes" = "stripesvert",
+	"Swirly" = "swirls",
+	"Suspect" = "amogus" //ඞ//
+	))
+
